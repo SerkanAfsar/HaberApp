@@ -7,6 +7,7 @@ namespace HaberApp.Core.Services
 {
     public interface IServiceBase<D, T> where T : BaseDto where D : BaseEntity
     {
+
         Task<ResponseResult<T>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<ResponseResult<T>> GetListAsync(Expression<Func<D, bool>> predicate = null, CancellationToken cancellationToken = default);
         Task<ResponseResult<T>> AddAsync(D entity, CancellationToken cancellationToken = default);

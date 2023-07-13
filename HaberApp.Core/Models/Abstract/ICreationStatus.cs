@@ -4,5 +4,6 @@
     {
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
+
     }
 }

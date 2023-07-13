@@ -1,9 +1,8 @@
-﻿using HaberApp.Core.DTOs;
-using System.Net;
+﻿using System.Net;
 
 namespace HaberApp.Core.Utils
 {
-    public class ResponseResult<T> where T : BaseDto
+    public class ResponseResult<T> where T : class
     {
         public T? Entity { get; set; } = null;
         public List<T>? Entities { get; set; } = null;

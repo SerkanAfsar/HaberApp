@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HaberApp.Core.DTOs.RequestDtos
+﻿namespace HaberApp.Core.DTOs.RequestDtos
 {
-    internal class CategorySourceRequestDto
+    public class CategorySourceRequestDto
     {
+        public int SourceType { get; set; }
+        public string SourceUrl { get; set; }
+        public int CategoryId { get; set; }
     }
 }

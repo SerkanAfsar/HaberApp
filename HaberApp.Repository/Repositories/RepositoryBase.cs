@@ -32,14 +32,20 @@ namespace HaberApp.Repository.Repositories
             return entity;
         }
 
+        public async Task<T?> GetByFilterAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            return await this.dbSet.Where(predicate).FirstOrDefaultAsync(cancellationToken) ?? null;
+        }
+
         public async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             return await this.dbSet.FindAsync(id, cancellationToken) ?? null;
         }
 
-        public IQueryable<T> GetListAsync(Expression<Func<T, bool>> predicate = null)
+        public async Task<IQueryable<T>> GetListAsync(Expression<Func<T, bool>> predicate = null)
         {
-            return predicate == null ? this.dbSet.AsNoTracking().AsQueryable() : this.dbSet.AsNoTracking().Where(predicate).AsQueryable();
+            return predicate == null ? await Task.Run(() => this.dbSet.AsNoTracking().AsQueryable()) :
+              await Task.Run(() => this.dbSet.AsNoTracking().Where(predicate).AsQueryable());
         }
 
         public async Task<IQueryable<T>> RemoveRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
