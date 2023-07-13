@@ -6,6 +6,7 @@ using HaberApp.Core.Services;
 using HaberApp.Core.UnitOfWork;
 using HaberApp.Core.Utils;
 using HaberApp.ServiceLayer.Caching;
+using HaberApp.ServiceLayer.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -53,7 +54,12 @@ namespace HaberApp.ServiceLayer.Services
 
         public async Task<ResponseResult<T>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            this.responseResult.Entity = this.mapper.Map<T>(await this.repositoryBase.GetByIdAsync(id, cancellationToken));
+            var result = await this.repositoryBase.GetByIdAsync(id, cancellationToken) ?? null;
+            if (result == null)
+            {
+                throw new NotFoundException($"{typeof(D).Name} Not Found");
+            }
+            this.responseResult.Entity = this.mapper.Map<T>(result);
             return this.responseResult;
         }
 
