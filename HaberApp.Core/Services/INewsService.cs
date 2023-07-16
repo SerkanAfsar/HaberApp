@@ -1,9 +1,10 @@
-﻿using HaberApp.Core.DTOs.ResponseDtos;
+﻿using HaberApp.Core.DTOs.RequestDtos;
+using HaberApp.Core.DTOs.ResponseDtos;
 using HaberApp.Core.Models;
 
 namespace HaberApp.Core.Services
 {
-    public interface INewsService : IServiceBase<News, NewsResponseDto>
+    public interface INewsService : IServiceBase<News, NewsRequestDto, NewsResponseDto>
     {
     }
 }

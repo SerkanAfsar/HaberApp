@@ -20,7 +20,7 @@ namespace HaberApp.ServiceLayer.Configuration
                 throw new ArgumentNullException(nameof(services));
             }
             services.AddScoped(typeof(ICacheProcess<>), typeof(CacheProcess<>));
-            services.AddScoped(typeof(IServiceBase<,>), typeof(ServiceBase<,>));
+            services.AddScoped(typeof(IServiceBase<,,>), typeof(ServiceBase<,,>));
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICategorySourceService, CategorySourceService>();
             services.AddScoped<INewsService, NewsService>();

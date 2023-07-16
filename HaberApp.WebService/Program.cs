@@ -4,7 +4,7 @@ using HaberApp.Repository.Configuration;
 using HaberApp.ServiceLayer.Configuration;
 using HaberApp.WebService.Configuration;
 using HaberApp.WebService.CustomFilters;
-using Microsoft.AspNetCore.Diagnostics;
+using HaberApp.WebService.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +37,7 @@ builder.Services.RegisterRepositories();
 builder.Services.RegisterServices();
 builder.Services.RegisterMapper();
 builder.Services.RegisterFluentValidations();
-builder.Services.AddScoped(typeof(CustomFilterAttribute<>));
+builder.Services.AddScoped(typeof(CustomFilterAttribute<,,>));
 
 
 var app = builder.Build();
@@ -55,8 +55,10 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers();
 
-app.UseMiddleware<ExceptionHandlerMiddleware>();
+app.MapControllers();
+app.UseMiddleware<CustomExceptionMiddleware>();
+
+
 
 app.Run();

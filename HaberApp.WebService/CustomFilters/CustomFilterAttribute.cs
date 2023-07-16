@@ -1,25 +1,37 @@
-﻿using HaberApp.Core.Utils;
+﻿using HaberApp.Core.DTOs;
+using HaberApp.Core.Models.Abstract;
+using HaberApp.Core.Services;
+using HaberApp.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 
 namespace HaberApp.WebService.CustomFilters
 {
-    public class CustomFilterAttribute<T> : IActionFilter where T : class
+    public class CustomFilterAttribute<Domain, RequestDto, ResponseDto> : IAsyncActionFilter where Domain : BaseEntity where RequestDto : BaseDto where ResponseDto : BaseDto
     {
-        private readonly ResponseResult<T> responseResult;
-        public CustomFilterAttribute()
+        private readonly ResponseResult<ResponseDto> responseResult;
+        private readonly IServiceBase<Domain, RequestDto, ResponseDto> serviceBase;
+
+        public CustomFilterAttribute(IServiceBase<Domain, RequestDto, ResponseDto> serviceBase)
         {
-            this.responseResult = new ResponseResult<T>();
+            this.responseResult = new ResponseResult<ResponseDto>();
+            this.serviceBase = serviceBase;
+
         }
 
-        public void OnActionExecuted(ActionExecutedContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            if (context.ActionArguments.ContainsKey("id"))
+            {
+                var id = context.ActionArguments["id"];
+                var result = await serviceBase.GetByIdAsync(Convert.ToInt32(id));
+                if (result.Success)
+                {
+                    context.HttpContext.Items["result"] = result;
+                }
+            }
 
-        }
-
-        public void OnActionExecuting(ActionExecutingContext context)
-        {
             if (!context.ModelState.IsValid)
             {
                 this.responseResult.StatusCode = System.Net.HttpStatusCode.BadRequest;
@@ -32,8 +44,10 @@ namespace HaberApp.WebService.CustomFilters
                 {
                     StatusCode = (int)HttpStatusCode.BadRequest
                 };
-                return;
+
             }
+
+            await next();
         }
     }
 }

@@ -5,15 +5,16 @@ using System.Linq.Expressions;
 
 namespace HaberApp.Core.Services
 {
-    public interface IServiceBase<D, T> where T : BaseDto where D : BaseEntity
+    public interface IServiceBase<Domain, RequestDto, ResponseDto> where Domain : BaseEntity
+        where RequestDto : BaseDto
+        where ResponseDto : BaseDto
     {
-
-        Task<ResponseResult<T>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-        Task<ResponseResult<T>> GetListAsync(Expression<Func<D, bool>> predicate = null, CancellationToken cancellationToken = default);
-        Task<ResponseResult<T>> AddAsync(D entity, CancellationToken cancellationToken = default);
-        Task<ResponseResult<T>> UpdateAsync(D entity, CancellationToken cancellationToken = default);
-        Task<ResponseResult<T>> DeleteAsync(D entity, CancellationToken cancellationToken = default);
-        Task<ResponseResult<T>> AddRangeAsync(IEnumerable<D> entities, CancellationToken cancellationToken = default);
-        Task<ResponseResult<T>> RemoveRangeAsync(IEnumerable<D> entities, CancellationToken cancellationToken = default);
+        Task<ResponseResult<ResponseDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<ResponseResult<ResponseDto>> GetListAsync(Expression<Func<Domain, bool>> predicate = null, CancellationToken cancellationToken = default);
+        Task<ResponseResult<ResponseDto>> AddAsync(RequestDto Dto, CancellationToken cancellationToken = default);
+        Task<ResponseResult<ResponseDto>> UpdateAsync(RequestDto Dto, CancellationToken cancellationToken = default);
+        Task<ResponseResult<ResponseDto>> DeleteAsync(RequestDto Dto, CancellationToken cancellationToken = default);
+        Task<ResponseResult<ResponseDto>> AddRangeAsync(IEnumerable<RequestDto> Dtos, CancellationToken cancellationToken = default);
+        Task<ResponseResult<ResponseDto>> RemoveRangeAsync(IEnumerable<RequestDto> Dtos, CancellationToken cancellationToken = default);
     }
 }
