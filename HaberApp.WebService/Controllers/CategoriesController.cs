@@ -45,10 +45,7 @@ namespace HaberApp.WebService.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryRequestDto model, CancellationToken cancellationToken = default)
         {
-            //var result = HttpContext.Items["result"] as ResponseResult<CategoryResponseDto>;
-
             return Ok(await this.categoryService.UpdateAsync(model, cancellationToken));
-
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id, CancellationToken cancellationToken = default)

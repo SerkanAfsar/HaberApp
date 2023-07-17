@@ -39,7 +39,18 @@ namespace HaberApp.ServiceLayer.Configuration
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddAutoMapper(typeof(MappingProfile).Assembly);
+            //services.AddAutoMapper(typeof(MappingProfile).Assembly);
+            //services.AddScoped(provider => new MapperConfiguration(cfg =>
+            //{
+            //    cfg.AddProfile(new MappingProfile(provider.GetService<ICategoryService>()));
+            //}).CreateMapper());
+            services.AddAutoMapper(cfg => cfg.AddMaps(typeof(MappingProfile).Assembly));
+
+            //services.AddSingleton(provider => new MapperConfiguration(cfg =>
+            //{
+            //    cfg.AddProfile(new MappingProfile(provider.CreateScope().ServiceProvider.GetService<ICategoryService>()));
+
+            //}).CreateMapper());
 
             return services;
         }

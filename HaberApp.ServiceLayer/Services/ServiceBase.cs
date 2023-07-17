@@ -33,8 +33,8 @@ namespace HaberApp.ServiceLayer.Services
         public async Task<ResponseResult<ResponseDto>> AddAsync(RequestDto Dto, CancellationToken cancellationToken = default)
         {
             var entity = await this.repositoryBase.CreateAsync(this.mapper.Map<Domain>(Dto), cancellationToken);
-            this.responseResult.Entity = this.mapper.Map<ResponseDto>(entity);
             await this.unitOfWork.CommitAsync(cancellationToken);
+            this.responseResult.Entity = this.mapper.Map<ResponseDto>(entity);
             return this.responseResult;
         }
 
@@ -48,7 +48,6 @@ namespace HaberApp.ServiceLayer.Services
 
         public async Task<ResponseResult<ResponseDto>> DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
-
             this.responseResult.Entity = this.mapper.Map<ResponseDto>(await this.repositoryBase.DeleteAsync(id, cancellationToken));
             await this.unitOfWork.CommitAsync(cancellationToken);
             return this.responseResult;
