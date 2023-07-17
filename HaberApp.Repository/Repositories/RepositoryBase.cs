@@ -26,10 +26,16 @@ namespace HaberApp.Repository.Repositories
             return entity;
         }
 
-        public async Task<T> DeleteAsync(T entity, CancellationToken cancellationToken)
+        public async Task<T> DeleteAsync(int id, CancellationToken cancellationToken)
         {
-            await Task.Run(() => this.dbSet.Remove(entity), cancellationToken);
-            return entity;
+            var entity = await this.dbSet.FindAsync(id);
+
+            if (entity != null)
+            {
+                await Task.Run(() => this.dbSet.Remove(entity), cancellationToken);
+            }
+
+            return entity ?? null;
         }
 
         public async Task<T?> GetByFilterAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)

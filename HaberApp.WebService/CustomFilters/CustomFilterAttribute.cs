@@ -22,17 +22,6 @@ namespace HaberApp.WebService.CustomFilters
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if (context.ActionArguments.ContainsKey("id"))
-            {
-                var id = context.ActionArguments["id"];
-                var result = await serviceBase.GetByIdAsync(Convert.ToInt32(id));
-                if (result.Success)
-                {
-                    context.HttpContext.Items["result"] = result;
-                }
-                return;
-            }
-
             if (!context.ModelState.IsValid)
             {
                 this.responseResult.StatusCode = System.Net.HttpStatusCode.BadRequest;
@@ -47,6 +36,17 @@ namespace HaberApp.WebService.CustomFilters
                     StatusCode = (int)HttpStatusCode.BadRequest
                 };
                 return;
+
+            }
+
+            if (context.ActionArguments.ContainsKey("id"))
+            {
+                var id = context.ActionArguments["id"];
+                var result = await serviceBase.GetByIdAsync(Convert.ToInt32(id));
+                if (result.Success)
+                {
+                    context.HttpContext.Items["result"] = result;
+                }
 
             }
 

@@ -9,7 +9,7 @@ namespace HaberApp.Core.Models
         public string CategoryName { get; set; }
         public string SeoTitle { get; set; }
         public string SeoDesctiption { get; set; }
-        public int Queue { get; set; }
+        public int Queue { get; set; } = 1;
         public string SeoUrl { get; set; }
         public List<CategorySource> CategorySources { get; set; } = new List<CategorySource>();
         public List<News> CategoryNews { get; set; } = new List<News>();

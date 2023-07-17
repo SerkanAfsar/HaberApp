@@ -14,10 +14,7 @@ namespace HaberApp.ServiceLayer.Validations
                  RuleFor(a => a.EMail).EmailAddress().WithMessage("E-Posta Formatı Yanlış!");
              });
 
-
             RuleFor(a => a.Password).NotNull().WithMessage("Şifre Giriniz").NotEmpty().WithMessage("Şifre Giriniz");
-
-
         }
     }
 }

@@ -4,6 +4,7 @@ using HaberApp.Core.DTOs.RequestDtos;
 using HaberApp.Core.DTOs.ResponseDtos;
 using HaberApp.Core.Models;
 using HaberApp.Core.Models.Abstract;
+using HaberApp.ServiceLayer.Utils;
 
 namespace HaberApp.ServiceLayer.Mappers
 {
@@ -11,7 +12,9 @@ namespace HaberApp.ServiceLayer.Mappers
     {
         public MappingProfile()
         {
-            CreateMap<CategoryRequestDto, Category>().ReverseMap();
+            CreateMap<CategoryRequestDto, Category>()
+                .ForMember(a => a.SeoUrl, b => b.MapFrom(c => StringHelper.KarakterDuzelt(c.CategoryName)));
+
             CreateMap<Category, CategoryResponseDto>();
 
             CreateMap<CategorySourceRequestDto, CategorySource>();
@@ -20,7 +23,7 @@ namespace HaberApp.ServiceLayer.Mappers
             CreateMap<NewsRequestDto, News>();
             CreateMap<News, NewsResponseDto>();
 
-            CreateMap<BaseResponseDto, BaseEntity>().ReverseMap();
+            CreateMap<BaseResponseDto, BaseEntity>();
 
         }
     }
