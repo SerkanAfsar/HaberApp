@@ -2,7 +2,6 @@ using HaberApp.Core.Models;
 using HaberApp.Repository;
 using HaberApp.Repository.Configuration;
 using HaberApp.ServiceLayer.Configuration;
-using HaberApp.WebService.Configuration;
 using HaberApp.WebService.CustomFilters;
 using HaberApp.WebService.Middlewares;
 

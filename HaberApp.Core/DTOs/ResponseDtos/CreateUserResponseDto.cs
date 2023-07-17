@@ -1,6 +1,6 @@
 ﻿namespace HaberApp.Core.DTOs.ResponseDtos
 {
-    public class CategoryResponseDto : BaseResponseDto
+    public class CreateUserResponseDto : BaseResponseDto
     {
     }
 }

@@ -28,13 +28,11 @@ namespace HaberApp.WebService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-
-            return Ok(result);
+            return Ok("Deneme");
         }
         [HttpPost]
         public async Task<IActionResult> AddCategorySource([FromBody] CategoryRequestDto model, CancellationToken cancellationToken = default)
         {
-
             return Ok();
         }
     }

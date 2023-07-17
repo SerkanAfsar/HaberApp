@@ -1,6 +1,6 @@
 ﻿namespace HaberApp.Core.DTOs.RequestDtos
 {
-    public class CategoryRequestDto : BaseDto
+    public class CategoryRequestDto : BaseRequestDto
     {
         public string CategoryName { get; set; }
         public string SeoTitle { get; set; }

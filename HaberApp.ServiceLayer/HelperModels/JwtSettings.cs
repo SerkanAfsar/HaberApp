@@ -1,4 +1,4 @@
-﻿namespace HaberApp.WebService.HelperModels
+﻿namespace HaberApp.ServiceLayer.HelperModels
 {
     public class JwtSettings
     {

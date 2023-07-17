@@ -3,7 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace HaberApp.ServiceLayer.Caching
 {
-    public class CacheProcess<T> : ICacheProcess<T> where T : BaseDto
+    public class CacheProcess<T> : ICacheProcess<T> where T : BaseResponseDto
     {
         private readonly IMemoryCache memoryCache;
         public CacheProcess(IMemoryCache memoryCache)

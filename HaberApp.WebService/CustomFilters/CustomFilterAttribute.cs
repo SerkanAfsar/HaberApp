@@ -8,7 +8,7 @@ using System.Net;
 
 namespace HaberApp.WebService.CustomFilters
 {
-    public class CustomFilterAttribute<Domain, RequestDto, ResponseDto> : IAsyncActionFilter where Domain : BaseEntity where RequestDto : BaseDto where ResponseDto : BaseDto
+    public class CustomFilterAttribute<Domain, RequestDto, ResponseDto> : IAsyncActionFilter where Domain : BaseEntity where RequestDto : BaseRequestDto where ResponseDto : BaseResponseDto
     {
         private readonly ResponseResult<ResponseDto> responseResult;
         private readonly IServiceBase<Domain, RequestDto, ResponseDto> serviceBase;
@@ -30,12 +30,14 @@ namespace HaberApp.WebService.CustomFilters
                 {
                     context.HttpContext.Items["result"] = result;
                 }
+                return;
             }
 
             if (!context.ModelState.IsValid)
             {
                 this.responseResult.StatusCode = System.Net.HttpStatusCode.BadRequest;
                 this.responseResult.Success = false;
+                this.responseResult.StatusCode = System.Net.HttpStatusCode.BadRequest;
                 context.ModelState.Select(a => a.Value).SelectMany(a => a.Errors).Select(a => a.ErrorMessage).ToList().ForEach(a =>
                 {
                     this.responseResult.ErrorList.Add(a);
@@ -44,6 +46,7 @@ namespace HaberApp.WebService.CustomFilters
                 {
                     StatusCode = (int)HttpStatusCode.BadRequest
                 };
+                return;
 
             }
 

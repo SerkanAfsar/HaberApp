@@ -6,8 +6,8 @@ using System.Linq.Expressions;
 namespace HaberApp.Core.Services
 {
     public interface IServiceBase<Domain, RequestDto, ResponseDto> where Domain : BaseEntity
-        where RequestDto : BaseDto
-        where ResponseDto : BaseDto
+        where RequestDto : BaseRequestDto
+        where ResponseDto : BaseResponseDto
     {
         Task<ResponseResult<ResponseDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<ResponseResult<ResponseDto>> GetListAsync(Expression<Func<Domain, bool>> predicate = null, CancellationToken cancellationToken = default);

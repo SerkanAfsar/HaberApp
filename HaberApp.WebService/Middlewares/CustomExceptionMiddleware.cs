@@ -32,17 +32,26 @@ namespace HaberApp.WebService.Middlewares
                         case NotFoundException:
                             {
                                 response.StatusCode = (int)HttpStatusCode.NotFound;
+                                responseResult.ErrorList.Add(error.Message);
+                                break;
+                            }
+                        case CustomAppException:
+                            {
+                                var err = (CustomAppException)error;
+                                response.StatusCode = (int)HttpStatusCode.BadRequest;
+                                responseResult.ErrorList = err.errorList;
                                 break;
                             }
                         default:
                             {
                                 response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                responseResult.ErrorList.Add(error.Message);
                                 break;
                             }
                     }
                     responseResult.StatusCode = (HttpStatusCode)response.StatusCode;
                     responseResult.Success = false;
-                    responseResult.ErrorList.Add(error.Message);
+
                     var innerEx = error.InnerException;
                     while (innerEx != null)
                     {

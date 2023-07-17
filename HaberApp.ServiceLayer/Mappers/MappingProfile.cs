@@ -20,7 +20,7 @@ namespace HaberApp.ServiceLayer.Mappers
             CreateMap<NewsRequestDto, News>();
             CreateMap<News, NewsResponseDto>();
 
-            CreateMap<BaseDto, BaseEntity>().ReverseMap();
+            CreateMap<BaseResponseDto, BaseEntity>().ReverseMap();
 
         }
     }

@@ -7,5 +7,7 @@ namespace HaberApp.Core.Models
     {
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public RoleTypes RoleType { get; set; }
+
+
     }
 }

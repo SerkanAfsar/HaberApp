@@ -12,8 +12,8 @@ using System.Linq.Expressions;
 
 namespace HaberApp.ServiceLayer.Services
 {
-    public class ServiceBase<Domain, RequestDto, ResponseDto> : IServiceBase<Domain, RequestDto, ResponseDto> where Domain : BaseEntity where RequestDto : BaseDto
-        where ResponseDto : BaseDto
+    public class ServiceBase<Domain, RequestDto, ResponseDto> : IServiceBase<Domain, RequestDto, ResponseDto> where Domain : BaseEntity where RequestDto : BaseRequestDto
+        where ResponseDto : BaseResponseDto
     {
         private readonly IRepositoryBase<Domain> repositoryBase;
         private readonly ICacheProcess<ResponseDto> cacheProcess;
