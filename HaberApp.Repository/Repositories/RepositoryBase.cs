@@ -60,10 +60,17 @@ namespace HaberApp.Repository.Repositories
             return entities.AsQueryable();
         }
 
-        public async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
+        public async Task<T?> UpdateAsync(int id, T entity, CancellationToken cancellationToken = default)
         {
-            await Task.Run(() => this.dbSet.Update(entity), cancellationToken);
-            return entity;
+            var existedEntity = await this.dbSet.FindAsync(id);
+
+            if (existedEntity != null)
+            {
+                entity.Id = id;
+                await Task.Run(() => appDbContext.Entry(existedEntity).CurrentValues.SetValues(entity), cancellationToken);
+            }
+
+            return existedEntity != null ? entity : null;
         }
     }
 }

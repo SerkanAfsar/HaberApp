@@ -42,7 +42,7 @@ namespace HaberApp.WebService.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategorySource(int id, [FromBody] CategorySourceRequestDto model, CancellationToken cancellationToken = default)
         {
-            var result = await this.categorySourceService.UpdateAsync(model, cancellationToken);
+            var result = await this.categorySourceService.UpdateAsync(id, model, cancellationToken);
             return Ok(result);
         }
         [HttpDelete("{id}")]

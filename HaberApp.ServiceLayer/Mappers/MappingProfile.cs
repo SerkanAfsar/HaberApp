@@ -4,7 +4,9 @@ using HaberApp.Core.DTOs.RequestDtos;
 using HaberApp.Core.DTOs.ResponseDtos;
 using HaberApp.Core.Models;
 using HaberApp.Core.Models.Abstract;
+using HaberApp.Core.Models.Enums;
 using HaberApp.ServiceLayer.Utils;
+using Microsoft.AspNetCore.Http;
 
 namespace HaberApp.ServiceLayer.Mappers
 {
@@ -20,23 +22,28 @@ namespace HaberApp.ServiceLayer.Mappers
             CreateMap<Category, CategoryResponseDto>();
 
             CreateMap<CategorySourceRequestDto, CategorySource>();
+            CreateMap<CategorySource, CategorySourceResponseDto>()
+                .ForMember(a => a.SourceTypeName, b => b.MapFrom(c => Enum.GetName(typeof(NewsSource), c.SourceType)));
 
-            CreateMap<CategorySource, CategorySourceResponseDto>().ForMember(a => a.CategoryStringName, opt =>
-            {
-                opt.MapFrom(a => GetCategoryName(a.CategoryId).Result);
-            });
-
-            CreateMap<NewsRequestDto, News>();
+            CreateMap<NewsRequestDto, News>().ForMember(a => a.NewsPicture, opt => opt.MapFrom(b => SaveImage(b.NewsPicture)));
             CreateMap<News, NewsResponseDto>();
 
             CreateMap<BaseResponseDto, BaseEntity>();
 
         }
-        private async Task<string> GetCategoryName(int categoryId)
+        private string SaveImage(IFormFile file)
         {
-            //var result = await this.categoryService.GetByIdAsync(categoryId);
-            //return result.Entity!.CategoryName;
-            return "deneme";
+            string imageExtension = Path.GetExtension(file.FileName);
+
+            string imageName = Guid.NewGuid() + imageExtension;
+
+            string path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/images/{imageName}");
+
+            using var stream = new FileStream(path, FileMode.Create);
+
+            file.CopyTo(stream);
+            return imageName;
         }
+
     }
 }

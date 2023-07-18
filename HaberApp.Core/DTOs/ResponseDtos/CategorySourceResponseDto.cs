@@ -4,6 +4,6 @@
     {
         public string SourceTypeName { get; set; }
         public string SourceUrl { get; set; }
-        public string CategoryStringName { get; set; }
+        public int CategoryId { get; set; }
     }
 }

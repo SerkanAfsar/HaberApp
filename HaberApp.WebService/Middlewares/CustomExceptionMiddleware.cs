@@ -8,7 +8,6 @@ namespace HaberApp.WebService.Middlewares
     {
         private readonly RequestDelegate _next;
 
-
         public CustomExceptionMiddleware(RequestDelegate _next)
         {
             this._next = _next;
@@ -61,7 +60,6 @@ namespace HaberApp.WebService.Middlewares
 
                     await response.WriteAsJsonAsync(responseResult);
                 }
-
 
             }
         }

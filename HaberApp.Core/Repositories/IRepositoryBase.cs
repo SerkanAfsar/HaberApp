@@ -9,7 +9,7 @@ namespace HaberApp.Core.Repositories
         Task<T?> GetByFilterAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
         Task<IQueryable<T>> GetListAsync(Expression<Func<T, bool>> predicate = null);
         Task<T> CreateAsync(T entity, CancellationToken cancellationToken);
-        Task<T> UpdateAsync(T entity, CancellationToken cancellationToken);
+        Task<T?> UpdateAsync(int id, T Entity, CancellationToken cancellationToken);
         Task<T> DeleteAsync(int id, CancellationToken cancellationToken);
         Task<IQueryable<T>> AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken);
         Task<IQueryable<T>> RemoveRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken);

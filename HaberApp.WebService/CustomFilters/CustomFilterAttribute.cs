@@ -22,9 +22,20 @@ namespace HaberApp.WebService.CustomFilters
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            if (context.ActionArguments.ContainsKey("id"))
+            {
+                var id = context.ActionArguments["id"];
+                var result = await serviceBase.GetByIdAsync(Convert.ToInt32(id));
+                if (result.Success)
+                {
+                    context.HttpContext.Items["result"] = result;
+                }
+
+            }
+
             if (!context.ModelState.IsValid)
             {
-                this.responseResult.StatusCode = System.Net.HttpStatusCode.BadRequest;
+
                 this.responseResult.Success = false;
                 this.responseResult.StatusCode = System.Net.HttpStatusCode.BadRequest;
                 context.ModelState.Select(a => a.Value).SelectMany(a => a.Errors).Select(a => a.ErrorMessage).ToList().ForEach(a =>
@@ -36,17 +47,6 @@ namespace HaberApp.WebService.CustomFilters
                     StatusCode = (int)HttpStatusCode.BadRequest
                 };
                 return;
-
-            }
-
-            if (context.ActionArguments.ContainsKey("id"))
-            {
-                var id = context.ActionArguments["id"];
-                var result = await serviceBase.GetByIdAsync(Convert.ToInt32(id));
-                if (result.Success)
-                {
-                    context.HttpContext.Items["result"] = result;
-                }
 
             }
 

@@ -79,9 +79,14 @@ namespace HaberApp.ServiceLayer.Services
             return this.responseResult;
         }
 
-        public async Task<ResponseResult<ResponseDto>> UpdateAsync(RequestDto Dto, CancellationToken cancellationToken = default)
+        public async Task<ResponseResult<ResponseDto>> UpdateAsync(int id, RequestDto Dto, CancellationToken cancellationToken = default)
         {
-            this.responseResult.Entity = this.mapper.Map<ResponseDto>(await this.repositoryBase.UpdateAsync(this.mapper.Map<Domain>(Dto), cancellationToken));
+            var entity = await this.repositoryBase.UpdateAsync(id, this.mapper.Map<Domain>(Dto), cancellationToken);
+            if (entity == null)
+            {
+                throw new NotFoundException($"{typeof(Domain).Name} with Id {id} Not Found");
+            }
+            this.responseResult.Entity = this.mapper.Map<ResponseDto>(entity);
             await this.unitOfWork.CommitAsync();
             return this.responseResult;
         }

@@ -17,10 +17,10 @@ namespace HaberApp.ServiceLayer.Validations
                 .NotEmpty().WithMessage("Haber Başlık Boş Bırakılamaz")
                 .NotNull().WithMessage("Haber Başlık Boş Bırakılamaz").DependentRules(() =>
                 {
-                    RuleFor(a => a.NewsTitle).MustAsync(async (a, CancellationToken) =>
+                    RuleFor(a => a.NewsTitle).MustAsync(async (b, CancellationToken) =>
                     {
-                        var result = await this.newsRepository.GetByFilterAsync(a => a.NewsTitle.ToLower().Trim() == a.ToString().ToLower().Trim()) ?? null;
-                        return result != null;
+                        var result = await this.newsRepository.GetByFilterAsync(a => a.NewsTitle.ToLower().Trim() == b.ToLower().Trim()) ?? null;
+                        return result == null;
                     }).WithMessage("Girdiğiniz Başlıkta Haber Mevcut");
                 });
 
