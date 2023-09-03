@@ -5,5 +5,7 @@ namespace HaberApp.Core.Repositories
     public interface ICategoryRepository : IRepositoryBase<Category>
     {
         Task<bool> DoesExistCategory(string categoryName, CancellationToken cancellationToken = default);
+        Task<List<Category>> GetCategoryListOrderByQueueAsync(CancellationToken cancellationToken = default);
+
     }
 }

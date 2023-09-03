@@ -20,7 +20,6 @@ namespace HaberApp.ServiceLayer.Services
         private readonly ResponseResult<string> responseResult;
         private readonly JwtSettings jwtSettings;
 
-
         public UserService(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, JwtSettings jwtSettings)
         {
             this.userManager = userManager;
@@ -115,20 +114,31 @@ namespace HaberApp.ServiceLayer.Services
                 return this.responseResult;
             }
 
+            if (await userManager.IsLockedOutAsync(user))
+            {
+                this.responseResult.ErrorList.Add("Oturum Kilitlenmiştir");
+                return this.responseResult;
+            }
+
             if (await userManager.CheckPasswordAsync(user, model.Password) == false)
             {
-                this.responseResult.ErrorList.Add("Şifre Yanlış!");
+                await this.userManager.AccessFailedAsync(user);
+                var count = await this.userManager.GetAccessFailedCountAsync(user);
+                this.responseResult.ErrorList.Add($"Şifre Yanlış. Kalan Deneme Hakkınız ${count}");
                 return this.responseResult;
             }
 
             var claims = new List<Claim>();
-            claims.Add(new Claim("ID", user.Id));
-            claims.Add(new Claim("UserName", $"{user.Name} {user.Surname}"));
+            claims.AddRange(await userManager.GetClaimsAsync(user));
+            claims.Add(new Claim(ClaimTypes.Name, user.UserName));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
             var roles = await userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
+                var userRole = await roleManager.FindByNameAsync(role);
+                claims.AddRange(await roleManager.GetClaimsAsync(userRole));
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret));

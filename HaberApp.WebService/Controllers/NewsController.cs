@@ -14,9 +14,11 @@ namespace HaberApp.WebService.Controllers
     public class NewsController : ControllerBase
     {
         private readonly INewsService newsService;
-        public NewsController(INewsService newsService)
+        private readonly ISourceService sourceService;
+        public NewsController(INewsService newsService, ISourceService sourceService)
         {
             this.newsService = newsService;
+            this.sourceService = sourceService;
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetNews(int id)
@@ -44,6 +46,12 @@ namespace HaberApp.WebService.Controllers
         public async Task<IActionResult> DeleteNews(int id, CancellationToken cancellationToken = default)
         {
             return Ok(await this.newsService.DeleteAsync(id, cancellationToken));
+        }
+        [HttpPost("SaveAllToDb")]
+        public async Task<IActionResult> SaveAllToDb(CancellationToken cancellationToken = default)
+        {
+            await this.sourceService.SaveAllToDb();
+            return Ok("Test Deneme");
         }
     }
 }

@@ -3,7 +3,9 @@ using HaberApp.Repository;
 using HaberApp.Repository.Configuration;
 using HaberApp.ServiceLayer.Configuration;
 using HaberApp.WebService.CustomFilters;
+using HaberApp.WebService.IdentityValidators;
 using HaberApp.WebService.Middlewares;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +29,21 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
     options.Password.RequiredLength = 6;
     options.User.RequireUniqueEmail = true;
+    options.Password.RequireDigit = true;
+    //options.Password.RequiredLength = 8;
+    //options.Password.RequiredUniqueChars = 1;
+    //options.Password.RequireLowercase = true;
+    //options.Password.RequireUppercase = true;
+    //options.Password.RequireNonAlphanumeric = true;
 
-}).AddEntityFrameworkStores<AppDbContext>();
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+
+
+}).AddEntityFrameworkStores<AppDbContext>()
+.AddErrorDescriber<CustomIdentityErrorDescriber>()
+.AddUserValidator<CustomAppUserValidator>()
+.AddDefaultTokenProviders();
 
 builder.Services.RegisterIdentityAuthentication(builder.Configuration);
 
@@ -37,6 +52,10 @@ builder.Services.RegisterServices();
 builder.Services.RegisterMapper();
 builder.Services.RegisterFluentValidations();
 builder.Services.AddScoped(typeof(CustomFilterAttribute<,,>));
+builder.Services.AddCors(options => options.AddPolicy("customPolicy", builder =>
+{
+    builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+}));
 
 
 var app = builder.Build();
@@ -49,15 +68,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.UseCors("customPolicy");
 
 app.MapControllers();
 app.UseMiddleware<CustomExceptionMiddleware>();
-
 
 
 app.Run();

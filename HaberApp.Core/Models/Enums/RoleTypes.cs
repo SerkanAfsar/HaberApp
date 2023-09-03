@@ -4,5 +4,6 @@
     {
         RootAdmin = 1,
         NormalUser = 2,
+        CustomType = 3,
     }
 }

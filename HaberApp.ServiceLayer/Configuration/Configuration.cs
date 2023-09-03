@@ -30,6 +30,9 @@ namespace HaberApp.ServiceLayer.Configuration
             services.AddScoped<ICategorySourceService, CategorySourceService>();
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ISourceService, SourceServices>();
+            services.AddScoped<IRoleService, RoleService>();
             return services;
         }
         public static IServiceCollection RegisterMapper(this IServiceCollection services)
@@ -66,6 +69,7 @@ namespace HaberApp.ServiceLayer.Configuration
             services.AddScoped<IValidator<CategorySourceRequestDto>, CategorySourceRequestValidator>();
             services.AddScoped<IValidator<CreateUserRequestDto>, CreateUserRequestDtoValidator>();
             services.AddScoped<IValidator<LoginUserRequestDto>, UserLoginRequestDtoValidator>();
+            services.AddScoped<IValidator<CreateRoleRequestDto>, RoleRequestValidator>();
             return services;
         }
 
@@ -90,8 +94,11 @@ namespace HaberApp.ServiceLayer.Configuration
                     ValidIssuer = settings.ValidIssuer,
                     ValidateIssuerSigningKey = settings.ValidateIssuerSigningKey,
                     ValidateLifetime = settings.ValidateLifetime,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.Secret))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.Secret)),
+                    ClockSkew = TimeSpan.Zero
+
                 };
+
             });
             return services;
         }

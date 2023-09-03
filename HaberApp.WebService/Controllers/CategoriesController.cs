@@ -36,22 +36,42 @@ namespace HaberApp.WebService.Controllers
             var result = await this.categoryService.GetListAsync(null, cancellationToken);
             return Ok(result);
         }
+        [HttpGet("GetCategoriesByPagination/{pageIndex}/{limit}")]
+        public async Task<IActionResult> GetAll(int pageIdex = 1, int limit = 10, CancellationToken cancellationToken = default)
+        {
+            var result = await this.categoryService.GetCategoryListByPaginationAsync(pageIdex, limit, cancellationToken);
+            return Ok(result);
+        }
+        [HttpGet("GetMenuList")]
+        public async Task<IActionResult> GetMenuList(CancellationToken cancellationToken = default)
+        {
+            return Ok(await this.categoryService.GetCategoryListOrderByQueueAsync(cancellationToken));
+        }
         [HttpPost]
         public async Task<IActionResult> AddCategory([FromBody] CategoryRequestDto model, CancellationToken cancellationToken = default)
         {
             var result = await this.categoryService.AddAsync(model, cancellationToken);
+            await this.categoryService.SetCategoryMenuListByQueueCacheAsync(cancellationToken);
             return Ok(result);
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryRequestDto model, CancellationToken cancellationToken = default)
         {
-            return Ok(await this.categoryService.UpdateAsync(id, model, cancellationToken));
+            var result = await this.categoryService.UpdateAsync(id, model, cancellationToken);
+            await this.categoryService.SetCategoryMenuListByQueueCacheAsync(cancellationToken);
+            return Ok(result);
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id, CancellationToken cancellationToken = default)
         {
-
-            return Ok(await this.categoryService.DeleteAsync(id, cancellationToken));
+            var result = await this.categoryService.DeleteAsync(id, cancellationToken);
+            await this.categoryService.SetCategoryMenuListByQueueCacheAsync(cancellationToken);
+            return Ok(result);
+        }
+        [HttpPost("deneme")]
+        public async Task<IActionResult> Test(CancellationToken cancellationToken = default)
+        {
+            return Ok(await this.categoryService.TestCategoryResponse(cancellationToken));
         }
     }
 }

@@ -30,6 +30,14 @@ namespace HaberApp.WebService.CustomFilters
                 {
                     context.HttpContext.Items["result"] = result;
                 }
+                //else
+                //{
+                //    context.Result = new ObjectResult(this.responseResult)
+                //    {
+                //        StatusCode = (int)HttpStatusCode.NotFound
+                //    };
+                //    return;
+                //}
 
             }
 

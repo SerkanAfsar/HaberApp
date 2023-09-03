@@ -25,10 +25,16 @@ namespace HaberApp.ServiceLayer.Mappers
             CreateMap<CategorySource, CategorySourceResponseDto>()
                 .ForMember(a => a.SourceTypeName, b => b.MapFrom(c => Enum.GetName(typeof(NewsSource), c.SourceType)));
 
-            CreateMap<NewsRequestDto, News>().ForMember(a => a.NewsPicture, opt => opt.MapFrom(b => SaveImage(b.NewsPicture)));
-            CreateMap<News, NewsResponseDto>();
+            CreateMap<NewsRequestDto, News>()
+                .ForMember(a => a.NewsPicture, opt => opt.MapFrom(b => SaveImage(b.NewsPicture)));
+            CreateMap<News, NewsResponseDto>().ForMember(a => a.SourceUrl, opt => opt.MapFrom(b => (int)b.NewsSource));
 
-            CreateMap<BaseResponseDto, BaseEntity>();
+            CreateMap<BaseRequestDto, BaseEntity>();
+            CreateMap<BaseEntity, BaseResponseDto>();
+
+            CreateMap<AppRole, RoleResponseDto>().ForMember(a => a.RoleName, opt => opt.MapFrom(b => b.Name))
+                .ForMember(a => a.RoleId, opt => opt.MapFrom(b => b.Id))
+                .ForMember(a => a.Id, opt => opt.Ignore());
 
         }
         private string SaveImage(IFormFile file)

@@ -38,7 +38,7 @@ namespace HaberApp.WebService.Middlewares
                             {
                                 var err = (CustomAppException)error;
                                 response.StatusCode = (int)HttpStatusCode.BadRequest;
-                                responseResult.ErrorList = err.errorList;
+                                responseResult.ErrorList = err.errorList != null ? err.errorList : new List<string>() { err.Message };
                                 break;
                             }
                         default:

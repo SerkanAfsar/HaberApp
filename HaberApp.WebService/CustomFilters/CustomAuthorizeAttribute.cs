@@ -16,7 +16,6 @@ namespace HaberApp.WebService.CustomFilters
     public class AuthorizeFilter : IAuthorizationFilter
     {
         readonly string[] _claim;
-
         public AuthorizeFilter(params string[] claim)
         {
             _claim = claim;

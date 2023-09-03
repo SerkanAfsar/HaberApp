@@ -16,5 +16,10 @@ namespace HaberApp.Repository.Repositories
         {
             return await this.dbset.AnyAsync(a => a.CategoryName == categoryName, cancellationToken);
         }
+
+        public async Task<List<Category>> GetCategoryListOrderByQueueAsync(CancellationToken cancellationToken = default)
+        {
+            return await this.dbset.OrderBy(a => a.Queue).ToListAsync(cancellationToken);
+        }
     }
 }
