@@ -17,10 +17,26 @@ namespace HaberApp.WebService.Controllers
         {
             this.roleService = roleService;
         }
+        [HttpGet("{roleId}")]
+        public async Task<IActionResult> GetRole(string roleId, CancellationToken cancellationToken = default)
+        {
+            return Ok(await this.roleService.GetRoleAsync(roleId, cancellationToken));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetRoles(CancellationToken cancellationToken = default)
+        {
+            return Ok(await this.roleService.GetRolesAsync(cancellationToken));
+        }
         [HttpPost]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleRequestDto model)
         {
             return Ok(await this.roleService.CreateRoleWithClaimsAsync(model));
+        }
+        [HttpDelete("{roleId}")]
+        public async Task<IActionResult> DeleteRole(string roleId)
+        {
+            return Ok(await this.roleService.DeleteRoleAsync(roleId));
         }
     }
 }

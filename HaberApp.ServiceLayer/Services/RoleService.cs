@@ -7,6 +7,7 @@ using HaberApp.Core.Services;
 using HaberApp.Core.Utils;
 using HaberApp.ServiceLayer.Exceptions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace HaberApp.ServiceLayer.Services
@@ -22,7 +23,7 @@ namespace HaberApp.ServiceLayer.Services
             this.responseResult = new ResponseResult<RoleResponseDto>();
             this.mapper = mapper;
         }
-        public async Task<ResponseResult<RoleResponseDto>> CreateRoleWithClaimsAsync(CreateRoleRequestDto requestDto)
+        public async Task<ResponseResult<RoleResponseDto>> CreateRoleWithClaimsAsync(CreateRoleRequestDto requestDto, CancellationToken cancellationToken = default)
         {
 
             var role = new AppRole()
@@ -57,6 +58,51 @@ namespace HaberApp.ServiceLayer.Services
             this.responseResult.Entity = this.mapper.Map<RoleResponseDto>(role);
             return this.responseResult;
 
+        }
+
+        public async Task<ResponseResult<RoleResponseDto>> DeleteRoleAsync(string roleId, CancellationToken cancellationToken = default)
+        {
+            var role = await this.roleManager.FindByIdAsync(roleId);
+            if (role == null)
+            {
+                throw new NotFoundException($"Role with {roleId} not Found");
+            }
+            var identityResult = await roleManager.DeleteAsync(role);
+            if (!identityResult.Succeeded)
+            {
+                throw new CustomAppException(identityResult.Errors.Select(a => a.Description).ToList());
+            }
+            this.responseResult.Entity = this.mapper.Map<RoleResponseDto>(role);
+            return this.responseResult;
+
+        }
+
+        public async Task<ResponseResult<RoleResponseDto>> GetRoleAsync(string roleId, CancellationToken cancellationToken = default)
+        {
+            var role = await this.roleManager.FindByIdAsync(roleId);
+            if (role == null)
+            {
+                throw new NotFoundException($"Role with {roleId} not Found");
+            }
+            var claims = await roleManager.GetClaimsAsync(role);
+            var roleResponseDto = new RoleResponseDto()
+            {
+                RoleId = role.Id,
+                RoleName = role.Name,
+                PermissionList = claims.ToList().Select(a => new PermissionList()
+                {
+                    PermissionValue = a.Value
+                }).ToList()
+            };
+
+            this.responseResult.Entity = roleResponseDto;
+            return this.responseResult;
+        }
+
+        public async Task<ResponseResult<RoleResponseDto>> GetRolesAsync(CancellationToken cancellationToken = default)
+        {
+            this.responseResult.Entities = this.mapper.Map<List<RoleResponseDto>>(await roleManager.Roles.ToListAsync(cancellationToken));
+            return responseResult;
         }
     }
 }

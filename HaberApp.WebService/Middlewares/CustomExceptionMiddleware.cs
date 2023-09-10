@@ -23,6 +23,7 @@ namespace HaberApp.WebService.Middlewares
             {
                 var responseResult = new ResponseResult<string>();
                 var response = context.Response;
+
                 response.ContentType = "application/json; charset=utf-8";
                 if (error is not null)
                 {
