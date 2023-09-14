@@ -10,5 +10,6 @@ namespace HaberApp.Core.Services
         Task<ResponseResult<RoleResponseDto>> GetRolesAsync(CancellationToken cancellationToken = default);
         Task<ResponseResult<RoleResponseDto>> DeleteRoleAsync(string roleId, CancellationToken cancellationToken = default);
         Task<ResponseResult<RoleResponseDto>> GetRoleAsync(string roleId, CancellationToken cancellationToken = default);
+        Task<ResponseResult<RoleResponseDto>> UpdateRoleWithClaimsAsync(string roleId, CreateRoleRequestDto requestDto, CancellationToken cancellationToken = default);
     }
 }

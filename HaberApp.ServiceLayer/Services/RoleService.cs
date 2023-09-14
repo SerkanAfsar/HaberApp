@@ -104,5 +104,42 @@ namespace HaberApp.ServiceLayer.Services
             this.responseResult.Entities = this.mapper.Map<List<RoleResponseDto>>(await roleManager.Roles.ToListAsync(cancellationToken));
             return responseResult;
         }
+
+        public async Task<ResponseResult<RoleResponseDto>> UpdateRoleWithClaimsAsync(string roleId, CreateRoleRequestDto requestDto, CancellationToken cancellationToken = default)
+        {
+            var role = await roleManager.FindByIdAsync(roleId);
+
+            if (role == null)
+            {
+                throw new NotFoundException($"Role with {roleId} not Found");
+            }
+            var allClaims = await roleManager.GetClaimsAsync(role);
+
+            foreach (var item in allClaims)
+            {
+                await roleManager.RemoveClaimAsync(role, item);
+
+            }
+
+            try
+            {
+                foreach (var item in requestDto.PermissionList)
+                {
+                    var claimResult = await roleManager.AddClaimAsync(role, new Claim("Permission", item.PermissionValue));
+
+                    if (!claimResult.Succeeded)
+                    {
+                        throw new Exception(claimResult.Errors.FirstOrDefault()?.Description);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await roleManager.DeleteAsync(role);
+                throw new CustomAppException(ex.Message);
+            }
+            this.responseResult.Entity = this.mapper.Map<RoleResponseDto>(role);
+            return this.responseResult;
+        }
     }
 }

@@ -21,6 +21,29 @@ namespace HaberApp.Repository
                 option.EnableRetryOnFailure(3);
             });
         }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            //foreach (var entry in ChangeTracker.Entries<IAuditable>().ToList())
+            //{
+            //    switch (entry.State)
+            //    {
+            //        case EntityState.Added:
+            //            entry.Entity.CreatedOn = DateTime.UtcNow;
+            //            entry.Entity.CreatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
+            //            break;
+
+            //        case EntityState.Modified:
+            //            entry.Entity.LastModifiedOn = DateTime.UtcNow;
+            //            entry.Entity.LastModifiedBy = httpContextAccessor.HttpContext.User.Identity.Name;
+            //            break;
+            //    }
+            //}
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+
+
+
 
         public DbSet<News> News { get; set; }
         public DbSet<Category> Categories { get; set; }

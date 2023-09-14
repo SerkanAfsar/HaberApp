@@ -33,6 +33,11 @@ namespace HaberApp.WebService.Controllers
         {
             return Ok(await this.roleService.CreateRoleWithClaimsAsync(model));
         }
+        [HttpPut("{roleId}")]
+        public async Task<IActionResult> UpdateRole(string roleId, CreateRoleRequestDto model, CancellationToken cancellationToken = default)
+        {
+            return Ok(await this.roleService.UpdateRoleWithClaimsAsync(roleId, model, cancellationToken));
+        }
         [HttpDelete("{roleId}")]
         public async Task<IActionResult> DeleteRole(string roleId)
         {
