@@ -43,7 +43,9 @@ namespace HaberApp.ServiceLayer.Services
             {
                 await SetCategoryMenuListByQueueCacheAsync(cancellationToken);
             }
-            this.responseResult.Entities = this._cacheProcess.GetCachedDtos(CacheConstants.CategoryList).Skip((pageIndex - 1) * 10).Take(10).ToList();
+            var list = this._cacheProcess.GetCachedDtos(CacheConstants.CategoryList);
+            this.responseResult.Entities = list.Skip((pageIndex - 1) * takeCount).Take(takeCount).ToList();
+            this.responseResult.TotalCount = list.Count();
             return this.responseResult;
         }
 

@@ -37,9 +37,9 @@ namespace HaberApp.WebService.Controllers
             return Ok(result);
         }
         [HttpGet("GetCategoriesByPagination/{pageIndex}/{limit}")]
-        public async Task<IActionResult> GetAll(int pageIdex = 1, int limit = 10, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetAll(int pageIndex, int limit, CancellationToken cancellationToken = default)
         {
-            var result = await this.categoryService.GetCategoryListByPaginationAsync(pageIdex, limit, cancellationToken);
+            var result = await this.categoryService.GetCategoryListByPaginationAsync(pageIndex, limit, cancellationToken);
             return Ok(result);
         }
         [HttpGet("GetMenuList")]

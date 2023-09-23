@@ -33,6 +33,12 @@ namespace HaberApp.WebService.Controllers
             var result = await this.categorySourceService.GetListAsync(null, cancellationToken);
             return Ok(result);
         }
+        [HttpGet("GetCategorySourcesByPagination/{pageIndex}/{limitSize}/{categoryId?}")]
+        public async Task<IActionResult> GetAll(int pageIndex, int limitSize, int? categoryId = null, CancellationToken cancellationToken = default)
+        {
+            var result = await this.categorySourceService.GetCategorySourcesByPagination(pageIndex, limitSize, categoryId, cancellationToken);
+            return Ok(result);
+        }
         [HttpPost]
         public async Task<IActionResult> AddCategorySource([FromBody] CategorySourceRequestDto model, CancellationToken cancellationToken = default)
         {

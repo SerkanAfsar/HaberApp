@@ -13,5 +13,7 @@ namespace HaberApp.Core.Repositories
         Task<T> DeleteAsync(int id, CancellationToken cancellationToken);
         Task<IQueryable<T>> AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken);
         Task<IQueryable<T>> RemoveRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken);
+        Task<int> EntitiesCount(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default);
+        Task<List<T>> GetEntitiesByPaginationAsync(int pageIndex, int limitCount, Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default);
     }
 }

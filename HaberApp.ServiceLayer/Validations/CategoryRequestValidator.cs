@@ -21,6 +21,11 @@ namespace HaberApp.ServiceLayer.Validations
                    return !result;
                }).WithMessage("Girdiğiniz Kategori Adı Sistemde Bulunmaktadır");
            });
+            RuleFor(a => a.SeoTitle).NotNull().WithMessage("Seo Title Boş Bırakılamaz")
+                  .NotEmpty().WithMessage("Seo Title Boş Bırakılamaz");
+
+            RuleFor(a => a.SeoDesctiption).NotNull().WithMessage("Seo Description Boş Bırakılamaz")
+                  .NotEmpty().WithMessage("Seo Description Boş Bırakılamaz");
 
         }
 

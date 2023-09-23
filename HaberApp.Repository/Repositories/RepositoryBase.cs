@@ -38,6 +38,11 @@ namespace HaberApp.Repository.Repositories
             return entity ?? null;
         }
 
+        public async Task<int> EntitiesCount(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+        {
+            return predicate != null ? await this.dbSet.Where(predicate).CountAsync() : await this.dbSet.CountAsync();
+        }
+
         public async Task<T?> GetByFilterAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
         {
             return await this.dbSet.Where(predicate).FirstOrDefaultAsync(cancellationToken) ?? null;
@@ -46,6 +51,12 @@ namespace HaberApp.Repository.Repositories
         public async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             return await this.dbSet.FindAsync(id, cancellationToken) ?? null;
+        }
+
+        public async Task<List<T>> GetEntitiesByPaginationAsync(int pageIndex, int limitCount, Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+        {
+            return predicate != null ? await this.dbSet.Where(predicate).Skip((pageIndex - 1) * limitCount).Take(limitCount).ToListAsync(cancellationToken) :
+                await this.dbSet.Skip((pageIndex - 1) * limitCount).Take(limitCount).ToListAsync(cancellationToken);
         }
 
         public async Task<IQueryable<T>> GetListAsync(Expression<Func<T, bool>> predicate = null)

@@ -9,5 +9,6 @@ namespace HaberApp.Core.Utils
         public HttpStatusCode StatusCode { get; set; } = HttpStatusCode.OK;
         public bool Success { get; set; } = true;
         public List<string> ErrorList { get; set; } = new List<string>();
+        public int TotalCount { get; set; }
     }
 }
