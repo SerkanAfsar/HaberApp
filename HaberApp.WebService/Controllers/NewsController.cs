@@ -31,6 +31,13 @@ namespace HaberApp.WebService.Controllers
         {
             return Ok(await this.newsService.GetListAsync(null, cancellationToken));
         }
+
+        [HttpGet("GetNewsByPagination/{pageIndex}/{limitSize}/{categoryId?}")]
+        public async Task<IActionResult> GetAll(int pageIndex, int limitSize, int? categoryId = null, CancellationToken cancellationToken = default)
+        {
+            var result = await this.newsService.GetNewsByPaginationIncludeCategoryAsync(pageIndex, limitSize, categoryId, cancellationToken);
+            return Ok(result);
+        }
         [HttpPost]
         public async Task<IActionResult> AddNews([FromForm] NewsRequestDto newsRequestDto, CancellationToken cancellationToken = default)
         {

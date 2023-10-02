@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using HaberApp.Core.DTOs.RequestDtos;
 using HaberApp.Core.Repositories;
+using Microsoft.AspNetCore.Http;
 
 namespace HaberApp.ServiceLayer.Validations
 {
@@ -8,19 +9,48 @@ namespace HaberApp.ServiceLayer.Validations
     {
         private readonly INewsRepository newsRepository;
         private readonly ICategoryRepository categoryRepository;
-        public NewsRequestValidator(INewsRepository newsRepository, ICategoryRepository categoryRepository)
+        private readonly IHttpContextAccessor httpContextAccessor;
+        public NewsRequestValidator(INewsRepository newsRepository, ICategoryRepository categoryRepository, IHttpContextAccessor httpContextAccessor)
         {
             this.newsRepository = newsRepository;
             this.categoryRepository = categoryRepository;
+            this.httpContextAccessor = httpContextAccessor;
+
 
             RuleFor(a => a.NewsTitle)
                 .NotEmpty().WithMessage("Haber Başlık Boş Bırakılamaz")
-                .NotNull().WithMessage("Haber Başlık Boş Bırakılamaz").DependentRules(() =>
+                .NotNull().WithMessage("Haber Başlık Boş Bırakılamaz")
+                .DependentRules(() =>
                 {
-                    RuleFor(a => a.NewsTitle).MustAsync(async (b, CancellationToken) =>
+                    RuleFor(a => a).MustAsync(async (b, CancellationToken) =>
                     {
-                        var result = await this.newsRepository.GetByFilterAsync(a => a.NewsTitle.ToLower().Trim() == b.ToLower().Trim()) ?? null;
-                        return result == null;
+                        var methodName = this.httpContextAccessor.HttpContext.Request.Method;
+
+                        switch (methodName)
+                        {
+
+                            case "POST":
+                                {
+                                    var result = await this.newsRepository.GetByFilterAsync(c => c.NewsTitle.ToLower().Trim() == b.NewsTitle.ToLower().Trim(), CancellationToken) ?? null;
+                                    return result == null;
+
+
+                                }
+                            case "PUT":
+                                {
+                                    var result = await this.newsRepository.GetByFilterAsync(c => c.NewsTitle.ToLower().Trim() == b.NewsTitle.ToLower().Trim() && c.Id != b.Id, CancellationToken) ?? null;
+                                    return result == null;
+                                }
+                            default:
+                                {
+                                    var result = await this.newsRepository.GetByFilterAsync(c => c.NewsTitle.ToLower().Trim() == b.NewsTitle.ToLower().Trim(), CancellationToken) ?? null;
+                                    return result == null;
+                                }
+
+                        }
+
+
+
                     }).WithMessage("Girdiğiniz Başlıkta Haber Mevcut");
                 });
 

@@ -16,19 +16,19 @@ namespace HaberApp.ServiceLayer.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly ResponseResult<CategorySourceResponseDto> _responseResult;
-        public CategorySourceService(IRepositoryBase<CategorySource> repositoryBase, ICacheProcess<CategorySourceResponseDto> cacheProcess, IUnitOfWork unitOfWork, IMapper mapper) : base(repositoryBase, cacheProcess, unitOfWork, mapper)
+        private readonly ICategorySourceRepository categorySourceRepository;
+        public CategorySourceService(IRepositoryBase<CategorySource> repositoryBase, ICacheProcess<CategorySourceResponseDto> cacheProcess, IUnitOfWork unitOfWork, IMapper mapper, ICategorySourceRepository categorySourceRepository) : base(repositoryBase, cacheProcess, unitOfWork, mapper)
         {
             this._repositoryBase = repositoryBase;
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.categorySourceRepository = categorySourceRepository;
             this._responseResult = new ResponseResult<CategorySourceResponseDto>();
         }
 
         public async Task<ResponseResult<CategorySourceResponseDto>> GetCategorySourcesByPagination(int pageIndex, int limitSize, int? categoryId = null, CancellationToken cancellationToken = default)
         {
-            this._responseResult.Entities = categoryId != null ?
-                this.mapper.Map<List<CategorySourceResponseDto>>(await this._repositoryBase.GetEntitiesByPaginationAsync(pageIndex, limitSize, a => a.CategoryId == categoryId, cancellationToken)) :
-                this.mapper.Map<List<CategorySourceResponseDto>>(await this._repositoryBase.GetEntitiesByPaginationAsync(pageIndex, limitSize, null, cancellationToken));
+            this._responseResult.Entities = this.mapper.Map<List<CategorySourceResponseDto>>(await this.categorySourceRepository.GetCategorySourcesIncludeCategoriesByPaginationAsync(pageIndex, limitSize, categoryId, null, cancellationToken));
 
             this._responseResult.TotalCount = categoryId != null ? await this._repositoryBase.EntitiesCount(a => a.CategoryId == categoryId, cancellationToken) : await this._repositoryBase.EntitiesCount(null, cancellationToken);
             return this._responseResult;

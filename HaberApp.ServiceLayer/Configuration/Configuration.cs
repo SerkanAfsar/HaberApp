@@ -33,6 +33,7 @@ namespace HaberApp.ServiceLayer.Configuration
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ISourceService, SourceServices>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IHelperService, HelperService>();
             return services;
         }
         public static IServiceCollection RegisterMapper(this IServiceCollection services)
@@ -44,7 +45,11 @@ namespace HaberApp.ServiceLayer.Configuration
 
             services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
-            //services.AddAutoMapper(cfg => cfg.AddMaps(typeof(MappingProfile).Assembly));
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.AddMaps(typeof(MappingProfile).Assembly);
+            });
+            services.AddTransient<CustomValueResolver>();
 
 
 

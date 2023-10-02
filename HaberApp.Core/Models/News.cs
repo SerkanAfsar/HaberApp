@@ -7,16 +7,17 @@ namespace HaberApp.Core.Models
     {
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public string SeoTitle { get; set; }
-        public string SeoDesctiption { get; set; }
+        public string? SeoTitle { get; set; }
+        public string? SeoDesctiption { get; set; }
         public string NewsTitle { get; set; }
-        public string NewsSubTitle { get; set; }
-        public string NewsContent { get; set; }
+        public string? NewsSubTitle { get; set; }
+        public string? NewsContent { get; set; }
         public NewsSource NewsSource { get; set; }
-        public string NewsPicture { get; set; }
-        public string SourceUrl { get; set; }
+        public string? NewsPicture { get; set; }
+        public string? SourceUrl { get; set; }
         public int ReadCount { get; set; } = 0;
         public int CategoryId { get; set; }
         public Category Category { get; set; }
+        public string? SeoUrl { get; set; }
     }
 }

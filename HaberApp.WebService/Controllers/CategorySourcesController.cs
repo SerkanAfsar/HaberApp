@@ -10,7 +10,7 @@ namespace HaberApp.WebService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ServiceFilter(typeof(CustomFilterAttribute<Category, CategoryRequestDto, CategoryResponseDto>))]
+    [ServiceFilter(typeof(CustomFilterAttribute<CategorySource, CategorySourceRequestDto, CategorySourceResponseDto>))]
     public class CategorySourcesController : ControllerBase
     {
 
