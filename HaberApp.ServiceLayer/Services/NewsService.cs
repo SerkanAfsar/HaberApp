@@ -7,7 +7,7 @@ using HaberApp.Core.Repositories;
 using HaberApp.Core.Services;
 using HaberApp.Core.UnitOfWork;
 using HaberApp.Core.Utils;
-using HaberApp.ServiceLayer.Caching;
+using Microsoft.EntityFrameworkCore;
 
 namespace HaberApp.ServiceLayer.Services
 {
@@ -19,7 +19,8 @@ namespace HaberApp.ServiceLayer.Services
         private readonly ResponseResult<NewsResponseDto> responseResult;
         private readonly IHelperService helperService;
         private readonly INewsRepository newsRepository;
-        public NewsService(IRepositoryBase<News> repositoryBase, ICacheProcess<NewsResponseDto> cacheProcess, IUnitOfWork unitOfWork, IMapper mapper, IHelperService helperService, INewsRepository newsRepository) : base(repositoryBase, cacheProcess, unitOfWork, mapper)
+        private readonly ICategorySourceRepository categorySourceRepository;
+        public NewsService(IRepositoryBase<News> repositoryBase, IUnitOfWork unitOfWork, IMapper mapper, IHelperService helperService, INewsRepository newsRepository, ICategorySourceRepository categorySourceRepository) : base(repositoryBase, unitOfWork, mapper)
         {
             this._newsRepository = repositoryBase;
             this.unitOfWork = unitOfWork;
@@ -27,6 +28,19 @@ namespace HaberApp.ServiceLayer.Services
             this.responseResult = new ResponseResult<NewsResponseDto>();
             this.helperService = helperService;
             this.newsRepository = newsRepository;
+            this.categorySourceRepository = categorySourceRepository;
+        }
+
+        public async Task<ResponseResult<NewsResponseDto>> AddAllNewsToDbAsync(CancellationToken cancellationToken = default)
+        {
+            var categorySources = await this.categorySourceRepository.GetListAsync(null);
+            var list = await categorySources.ToListAsync(cancellationToken);
+
+            foreach (var categorySource in list)
+            {
+
+            }
+            return this.responseResult;
         }
 
         public async Task<ResponseResult<NewsResponseDto>> CreateNewsByFormAsync(NewsRequestDto model, CancellationToken cancellationToken = default)
@@ -38,7 +52,7 @@ namespace HaberApp.ServiceLayer.Services
                 CreateDate = DateTime.Now,
                 CreationDate = DateTime.Now,
                 NewsContent = model.NewsContent,
-                NewsPicture = await this.helperService.SaveImageToDb(friendlyUrl, model.NewsPicture),
+                //NewsPicture = await this.helperService.SaveImageToDb(friendlyUrl, model.NewsPicture),
                 ReadCount = 1,
                 SeoTitle = model.SeoTitle,
                 SeoDesctiption = model.SeoDesctiption,

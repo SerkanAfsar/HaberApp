@@ -5,7 +5,6 @@ using HaberApp.Core.Repositories;
 using HaberApp.Core.Services;
 using HaberApp.Core.UnitOfWork;
 using HaberApp.Core.Utils;
-using HaberApp.ServiceLayer.Caching;
 using HaberApp.ServiceLayer.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -16,15 +15,15 @@ namespace HaberApp.ServiceLayer.Services
         where ResponseDto : BaseResponseDto
     {
         private readonly IRepositoryBase<Domain> repositoryBase;
-        private readonly ICacheProcess<ResponseDto> cacheProcess;
+
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly ResponseResult<ResponseDto> responseResult;
 
-        public ServiceBase(IRepositoryBase<Domain> repositoryBase, ICacheProcess<ResponseDto> cacheProcess, IUnitOfWork unitOfWork, IMapper mapper)
+        public ServiceBase(IRepositoryBase<Domain> repositoryBase, IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.repositoryBase = repositoryBase;
-            this.cacheProcess = cacheProcess;
+
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.responseResult = new ResponseResult<ResponseDto>();

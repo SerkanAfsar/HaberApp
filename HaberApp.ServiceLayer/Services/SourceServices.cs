@@ -11,12 +11,15 @@ namespace HaberApp.ServiceLayer.Services
 
         private readonly ICategorySourceRepository categorySourceRepository;
         private readonly IAdaletBizRepository adaletBizRepository;
-        public SourceServices(IUnitOfWork unitOfWork, ICategorySourceRepository categorySourceRepository, IAdaletBizRepository adaletBizRepository)
+        private readonly IAdaletMedyaRepository adaletMedyaRepository;
+        public SourceServices(IUnitOfWork unitOfWork, ICategorySourceRepository categorySourceRepository, IAdaletBizRepository adaletBizRepository, IAdaletMedyaRepository adaletMedyaRepository)
         {
             this.unitOfWork = unitOfWork;
             this.categorySourceRepository = categorySourceRepository;
             this.adaletBizRepository = adaletBizRepository;
+            this.adaletMedyaRepository = adaletMedyaRepository;
         }
+
 
         public async Task SaveAllToDb(CancellationToken cancellationToken = default)
         {
@@ -27,7 +30,12 @@ namespace HaberApp.ServiceLayer.Services
                 {
                     case Core.Models.Enums.NewsSource.AdaletBiz:
                         {
-                            await this.adaletBizRepository.GetArticleSourceListAsync(item.SourceUrl, item.CategoryId, cancellationToken);
+                            this.adaletBizRepository.GetArticleSourceListAsync(item.SourceUrl, item.CategoryId, cancellationToken).Wait(cancellationToken);
+                            break;
+                        }
+                    case Core.Models.Enums.NewsSource.AdaletMedya:
+                        {
+                            this.adaletMedyaRepository.GetArticleSourceListAsync(item.SourceUrl, item.CategoryId, cancellationToken).Wait(cancellationToken);
                             break;
                         }
                     default:

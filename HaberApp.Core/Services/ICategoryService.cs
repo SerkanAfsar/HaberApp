@@ -8,8 +8,8 @@ namespace HaberApp.Core.Services
     public interface ICategoryService : IServiceBase<Category, CategoryRequestDto, CategoryResponseDto>
     {
         Task<ResponseResult<CategoryResponseDto>> GetCategoryListOrderByQueueAsync(CancellationToken cancellationToken = default);
-        Task SetCategoryMenuListByQueueCacheAsync(CancellationToken cancellationToken = default);
-        Task<ResponseResult<CategoryResponseDto>> GetCategoryListByPaginationAsync(int pageIndex = 1, int takeCount = 10, CancellationToken cancellationToken = default);
-        Task<ResponseResult<CategoryResponseDto>> TestCategoryResponse(CancellationToken cancellationToken = default);
+        Task<ResponseResult<CategoryResponseDto>> GetCategoryListOrderByPaginationAsync(int startIndex = 1, int count = 10, CancellationToken cancellationToken = default);
+        Task<ResponseResult<CategoryResponseDto>> UpCategoryAsync(CategoryResponseDto category, CancellationToken cancellationToken = default);
+        Task<ResponseResult<CategoryResponseDto>> DownCategoryAsync(CategoryResponseDto category, CancellationToken cancellationToken = default);
     }
 }

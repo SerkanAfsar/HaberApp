@@ -6,7 +6,6 @@ using HaberApp.Core.Repositories;
 using HaberApp.Core.Services;
 using HaberApp.Core.UnitOfWork;
 using HaberApp.Core.Utils;
-using HaberApp.ServiceLayer.Caching;
 
 namespace HaberApp.ServiceLayer.Services
 {
@@ -17,7 +16,7 @@ namespace HaberApp.ServiceLayer.Services
         private readonly IMapper mapper;
         private readonly ResponseResult<CategorySourceResponseDto> _responseResult;
         private readonly ICategorySourceRepository categorySourceRepository;
-        public CategorySourceService(IRepositoryBase<CategorySource> repositoryBase, ICacheProcess<CategorySourceResponseDto> cacheProcess, IUnitOfWork unitOfWork, IMapper mapper, ICategorySourceRepository categorySourceRepository) : base(repositoryBase, cacheProcess, unitOfWork, mapper)
+        public CategorySourceService(IRepositoryBase<CategorySource> repositoryBase, IUnitOfWork unitOfWork, IMapper mapper, ICategorySourceRepository categorySourceRepository) : base(repositoryBase, unitOfWork, mapper)
         {
             this._repositoryBase = repositoryBase;
             this.unitOfWork = unitOfWork;

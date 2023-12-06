@@ -11,11 +11,11 @@ namespace HaberApp.Repository.Repositories.NewsSourceRepositories
     public class AdaletMedyaRepository : IAdaletMedyaRepository
     {
         private readonly INewsRepository newsRepository;
-        private readonly ICategoryRepository categoryRepository;
-        public AdaletMedyaRepository(INewsRepository newsRepository, ICategoryRepository categoryRepository)
+        private readonly IImageHelperService imageHelperService;
+        public AdaletMedyaRepository(INewsRepository newsRepository, IImageHelperService imageHelperService)
         {
             this.newsRepository = newsRepository;
-            this.categoryRepository = categoryRepository;
+            this.imageHelperService = imageHelperService;
         }
         public async Task GetArticleSourceListAsync(string categorySourceUrl, int CategoryID, CancellationToken cancellationToken = default)
         {
@@ -90,12 +90,7 @@ namespace HaberApp.Repository.Repositories.NewsSourceRepositories
                     {
                         var article = new News();
                         article.NewsTitle = title;
-
-                        var categoryEntity = await categoryRepository.GetByIdAsync(CategoryID);
-
-                        var seoUrl = StringHelper.FriendlySeoUrl(title);
-
-
+                        article.SeoUrl = StringHelper.FriendlySeoUrl(title);
                         HtmlNode subDesc = doc.DocumentNode.SelectSingleNode("//p[@class='lead hs-head-font']");
                         if (subDesc != null)
                         {
@@ -121,17 +116,31 @@ namespace HaberApp.Repository.Repositories.NewsSourceRepositories
                         }
 
                         HtmlNode pictureNode = doc.DocumentNode.SelectSingleNode("//div[@class='onecikan_gorsel']//img");
+                        //if (pictureNode != null)
+                        //{
+                        //    var picUrl = pictureNode.Attributes["data-lazy-src"]?.Value;
+                        //    var fileExt = Path.GetExtension(picUrl);
+                        //    var fileName = seoUrl + fileExt;
+                        //    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Images", fileName);
+                        //    var imageBytes = await client.GetByteArrayAsync(picUrl);
+                        //    await File.WriteAllBytesAsync(filePath, imageBytes);
+                        //    article.NewsPicture = fileName;
+                        //}
+
+
                         if (pictureNode != null)
                         {
-                            var picUrl = pictureNode.Attributes["data-lazy-src"]?.Value;
-                            var fileExt = Path.GetExtension(picUrl);
-                            var fileName = seoUrl + fileExt;
-                            var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Images", fileName);
-                            var imageBytes = await client.GetByteArrayAsync(picUrl);
-                            await File.WriteAllBytesAsync(filePath, imageBytes);
-                            article.NewsPicture = fileName;
+                            var responseModel = await imageHelperService.ImageResult(pictureNode.Attributes["data-lazy-src"].Value);
+                            if (responseModel != null && responseModel.success)
+                            {
+                                var variants = imageHelperService.RestoreVariants(responseModel);
+
+                                article.NewsPictureSmall = variants[0];
+                                article.NewsPictureMedium = variants[1];
+                                article.NewsPictureBig = variants[2];
+                            }
                         }
-                        article.SourceUrl = categoryEntity.SeoUrl + "/" + seoUrl;
+
                         article.CategoryId = CategoryID;
                         article.SourceUrl = articleSourceUrl;
                         article.NewsSource = NewsSource.AdaletMedya;

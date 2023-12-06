@@ -13,7 +13,9 @@ namespace HaberApp.Core.Models
         public string? NewsSubTitle { get; set; }
         public string? NewsContent { get; set; }
         public NewsSource NewsSource { get; set; }
-        public string? NewsPicture { get; set; }
+        public string? NewsPictureSmall { get; set; }
+        public string? NewsPictureMedium { get; set; }
+        public string? NewsPictureBig { get; set; }
         public string? SourceUrl { get; set; }
         public int ReadCount { get; set; } = 0;
         public int CategoryId { get; set; }

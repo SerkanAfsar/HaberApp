@@ -39,7 +39,7 @@ namespace HaberApp.WebService.Controllers
         [HttpGet("GetCategoriesByPagination/{pageIndex}/{limit}")]
         public async Task<IActionResult> GetAll(int pageIndex, int limit, CancellationToken cancellationToken = default)
         {
-            var result = await this.categoryService.GetCategoryListByPaginationAsync(pageIndex, limit, cancellationToken);
+            var result = await this.categoryService.GetCategoryListOrderByPaginationAsync(pageIndex, limit, cancellationToken);
             return Ok(result);
         }
         [HttpGet("GetMenuList")]
@@ -51,27 +51,35 @@ namespace HaberApp.WebService.Controllers
         public async Task<IActionResult> AddCategory([FromBody] CategoryRequestDto model, CancellationToken cancellationToken = default)
         {
             var result = await this.categoryService.AddAsync(model, cancellationToken);
-            await this.categoryService.SetCategoryMenuListByQueueCacheAsync(cancellationToken);
+
             return Ok(result);
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryRequestDto model, CancellationToken cancellationToken = default)
         {
             var result = await this.categoryService.UpdateAsync(id, model, cancellationToken);
-            await this.categoryService.SetCategoryMenuListByQueueCacheAsync(cancellationToken);
             return Ok(result);
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id, CancellationToken cancellationToken = default)
         {
             var result = await this.categoryService.DeleteAsync(id, cancellationToken);
-            await this.categoryService.SetCategoryMenuListByQueueCacheAsync(cancellationToken);
             return Ok(result);
         }
-        [HttpPost("deneme")]
-        public async Task<IActionResult> Test(CancellationToken cancellationToken = default)
+        [HttpGet("UpCategory/{id}")]
+        public async Task<IActionResult> UpCategory(int id, CancellationToken cancellationToken = default)
         {
-            return Ok(await this.categoryService.TestCategoryResponse(cancellationToken));
+            var category = HttpContext.Items["result"] as CategoryResponseDto;
+            return Ok(await this.categoryService.UpCategoryAsync(category, cancellationToken));
         }
+
+        [HttpGet("DownCategory/{id}")]
+        public async Task<IActionResult> DownCategory(int id, CancellationToken cancellationToken = default)
+        {
+            var category = HttpContext.Items["result"] as CategoryResponseDto;
+            return Ok(await this.categoryService.DownCategoryAsync(category, cancellationToken));
+        }
+
+
     }
 }

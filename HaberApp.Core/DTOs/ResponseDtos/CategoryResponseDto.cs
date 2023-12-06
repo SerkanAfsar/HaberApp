@@ -5,5 +5,6 @@
         public string CategoryName { get; set; }
         public string SeoTitle { get; set; }
         public string SeoDesctiption { get; set; }
+        public int Queue { get; set; }
     }
 }

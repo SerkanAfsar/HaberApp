@@ -26,14 +26,14 @@ namespace HaberApp.ServiceLayer.Mappers
                 .ForMember(a => a.SourceTypeName, b => b.MapFrom(c => Enum.GetName(typeof(NewsSource), c.SourceType)));
 
             CreateMap<NewsRequestDto, News>()
-                .ForMember(a => a.NewsPicture, opt => opt.MapFrom<CustomValueResolver>())
+                //.ForMember(a => a.NewsPicture, opt => opt.MapFrom<CustomValueResolver>())
                 .ForMember(a => a.NewsSource, opt => opt.MapFrom(c => (NewsSource)c.NewsSource))
                 .ForMember(a => a.SeoUrl, opt => opt.MapFrom(c => StringHelper.KarakterDuzelt(c.NewsTitle)));
 
 
             CreateMap<News, NewsResponseDto>()
-                .ForMember(a => a.SourceUrl, opt => opt.MapFrom(b => (int)b.NewsSource))
-                .ForMember(a => a.NewsPicture, opt => opt.MapFrom(a => a.NewsPicture ?? "no-image"));
+                .ForMember(a => a.SourceUrl, opt => opt.MapFrom(b => (int)b.NewsSource));
+            //.ForMember(a => a.NewsPicture, opt => opt.MapFrom(a => a.NewsPicture ?? "no-image"));
 
             CreateMap<BaseRequestDto, BaseEntity>();
             CreateMap<BaseEntity, BaseResponseDto>();
@@ -63,7 +63,8 @@ namespace HaberApp.ServiceLayer.Mappers
                 {
                     return SaveImage(source.NewsTitle, source.NewsPicture);
                 }
-                return entity.NewsPicture;
+                //return entity.NewsPicture;
+                return string.Empty;
             }
             return SaveImage(source.NewsTitle, source.NewsPicture);
 

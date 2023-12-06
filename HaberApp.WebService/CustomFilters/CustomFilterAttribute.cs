@@ -28,7 +28,7 @@ namespace HaberApp.WebService.CustomFilters
                 var result = await serviceBase.GetByIdAsync(Convert.ToInt32(id));
                 if (result.Success)
                 {
-                    context.HttpContext.Items["result"] = result;
+                    context.HttpContext.Items["result"] = result.Entity;
                 }
                 //else
                 //{

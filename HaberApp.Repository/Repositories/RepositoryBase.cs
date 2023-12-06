@@ -43,6 +43,8 @@ namespace HaberApp.Repository.Repositories
             return predicate != null ? await this.dbSet.Where(predicate).CountAsync() : await this.dbSet.CountAsync();
         }
 
+
+
         public async Task<T?> GetByFilterAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
         {
             return await this.dbSet.Where(predicate).FirstOrDefaultAsync(cancellationToken) ?? null;

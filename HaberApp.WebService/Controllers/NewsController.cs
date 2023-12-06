@@ -57,8 +57,9 @@ namespace HaberApp.WebService.Controllers
         [HttpPost("SaveAllToDb")]
         public async Task<IActionResult> SaveAllToDb(CancellationToken cancellationToken = default)
         {
-            await this.sourceService.SaveAllToDb();
-            return Ok("Test Deneme");
+            await this.sourceService.SaveAllToDb(cancellationToken);
+            return Ok("deneme");
+
         }
     }
 }

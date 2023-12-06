@@ -11,13 +11,11 @@ namespace HaberApp.Repository.Repositories.NewsSourceRepositories
     public class AdaletBizRepository : IAdaletBizRepository
     {
         private readonly INewsRepository newsRepository;
-        private readonly ICategoryRepository categoryRepository;
-
-        public AdaletBizRepository(INewsRepository newsRepository, ICategoryRepository categoryRepository)
+        private readonly IImageHelperService ımageHelperService;
+        public AdaletBizRepository(INewsRepository newsRepository, IImageHelperService ımageHelperService)
         {
             this.newsRepository = newsRepository;
-            this.categoryRepository = categoryRepository;
-
+            this.ımageHelperService = ımageHelperService;
         }
         public async Task AddArticleToDbAsync(string articleSourceUrl, int CategoryID, CancellationToken cancellationToken = default)
         {
@@ -47,8 +45,6 @@ namespace HaberApp.Repository.Repositories.NewsSourceRepositories
                     {
                         var article = new News();
                         article.NewsTitle = title;
-                        var categoryEntity = await categoryRepository.GetByIdAsync(CategoryID, cancellationToken);
-
 
                         var seoUrl = StringHelper.FriendlySeoUrl(title);
 
@@ -67,10 +63,25 @@ namespace HaberApp.Repository.Repositories.NewsSourceRepositories
                             article.NewsContent = HttpUtility.HtmlDecode(nodeContent.InnerHtml);
                         }
                         article.SeoTitle = title;
-                        article.SeoDesctiption = title;
-                        article.NewsPicture = "deneme";
 
-                        article.SourceUrl = categoryEntity.SeoUrl + "/" + seoUrl;
+                        article.SeoDesctiption = title;
+
+                        HtmlNode pictureNode = doc.DocumentNode.SelectSingleNode("//div[@class='clearfix newspic']//span//img");
+                        if (pictureNode != null)
+                        {
+                            var responseModel = await ımageHelperService.ImageResult(pictureNode.Attributes["src"].Value);
+                            if (responseModel != null && responseModel.success)
+                            {
+                                var variants = ımageHelperService.RestoreVariants(responseModel);
+
+                                article.NewsPictureSmall = variants[0];
+                                article.NewsPictureMedium = variants[1];
+                                article.NewsPictureBig = variants[2];
+                            }
+                        }
+                        //article.NewsPicture = "deneme";
+
+                        article.SeoUrl = seoUrl;
                         article.CategoryId = CategoryID;
                         article.SourceUrl = articleSourceUrl;
                         article.NewsSource = NewsSource.AdaletBiz;

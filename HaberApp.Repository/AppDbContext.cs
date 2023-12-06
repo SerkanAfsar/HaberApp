@@ -1,4 +1,6 @@
 ﻿using HaberApp.Core.Models;
+using HaberApp.Core.Models.Abstract;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -8,10 +10,11 @@ namespace HaberApp.Repository
     public class AppDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
         private readonly IConfiguration configuration;
-        public AppDbContext(DbContextOptions<AppDbContext> options, IConfiguration configuration) : base(options)
+        private readonly IHttpContextAccessor httpContextAccessor;
+        public AppDbContext(DbContextOptions<AppDbContext> options, IConfiguration configuration, IHttpContextAccessor httpContextAccessor) : base(options)
         {
             this.configuration = configuration;
-
+            this.httpContextAccessor = httpContextAccessor;
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -21,24 +24,32 @@ namespace HaberApp.Repository
                 option.EnableRetryOnFailure(3);
             });
         }
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            //foreach (var entry in ChangeTracker.Entries<IAuditable>().ToList())
-            //{
-            //    switch (entry.State)
-            //    {
-            //        case EntityState.Added:
-            //            entry.Entity.CreatedOn = DateTime.UtcNow;
-            //            entry.Entity.CreatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
-            //            break;
+            foreach (var entry in ChangeTracker.Entries<ICreationStatus>().ToList())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.CreateDate = DateTime.UtcNow;
+                        //entry.Entity. = httpContextAccessor.HttpContext.User.Identity.Name;
+                        if (entry.Entity is Category)
+                        {
+                            var dbSet = entry.Context.Set<Category>();
+                            var castedEntity = (Category)entry.Entity;
+                            var lastQueue = await dbSet.OrderByDescending(a => a.Queue).Take(1).FirstOrDefaultAsync(cancellationToken);
+                            castedEntity.Queue = lastQueue != null ? lastQueue.Queue + 1 : 1;
+                        }
+                        break;
 
-            //        case EntityState.Modified:
-            //            entry.Entity.LastModifiedOn = DateTime.UtcNow;
-            //            entry.Entity.LastModifiedBy = httpContextAccessor.HttpContext.User.Identity.Name;
-            //            break;
-            //    }
-            //}
-            return base.SaveChangesAsync(cancellationToken);
+                    case EntityState.Modified:
+                        entry.Entity.UpdatedDate = DateTime.UtcNow;
+                        //entry.Entity.LastModifiedBy = httpContextAccessor.HttpContext.User.Identity.Name;
+                        break;
+                }
+            }
+
+            return await base.SaveChangesAsync(cancellationToken);
         }
 
 

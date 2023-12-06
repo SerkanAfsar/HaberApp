@@ -7,6 +7,7 @@ using HaberApp.WebService.IdentityValidators;
 using HaberApp.WebService.Middlewares;
 using Microsoft.AspNetCore.Identity;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -45,13 +46,15 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
 .AddUserValidator<CustomAppUserValidator>()
 .AddDefaultTokenProviders();
 
+
 builder.Services.RegisterIdentityAuthentication(builder.Configuration);
 
-builder.Services.RegisterRepositories();
+builder.Services.RegisterRepositories(builder.Configuration);
 builder.Services.RegisterServices();
 builder.Services.RegisterMapper();
 builder.Services.RegisterFluentValidations();
 builder.Services.AddScoped(typeof(CustomFilterAttribute<,,>));
+
 builder.Services.AddCors(options => options.AddPolicy("customPolicy", builder =>
 {
     builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials();

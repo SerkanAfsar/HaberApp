@@ -9,6 +9,6 @@ namespace HaberApp.Core.Services
     {
         Task<ResponseResult<NewsResponseDto>> CreateNewsByFormAsync(NewsRequestDto model, CancellationToken cancellationToken = default);
         Task<ResponseResult<NewsResponseDto>> GetNewsByPaginationIncludeCategoryAsync(int pageIndex, int limitSize, int? categoryId = null, CancellationToken cancellationToken = default);
-
+        Task<ResponseResult<NewsResponseDto>> AddAllNewsToDbAsync(CancellationToken cancellationToken = default);
     }
 }
