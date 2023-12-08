@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using HaberApp.Core.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
@@ -16,9 +17,11 @@ namespace HaberApp.WebService.CustomFilters
     public class AuthorizeFilter : IAuthorizationFilter
     {
         readonly string[] _claim;
+        private readonly ResponseResult<string> responseResult;
         public AuthorizeFilter(params string[] claim)
         {
             _claim = claim;
+            this.responseResult = new ResponseResult<string>();
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
@@ -29,10 +32,15 @@ namespace HaberApp.WebService.CustomFilters
                 return;
             }
 
+
+
             var IsAuthenticated = context.HttpContext.User.Identity.IsAuthenticated;
             if (!IsAuthenticated)
             {
-                context.Result = new UnauthorizedObjectResult("Unauthorized.. Invalid EMail Or Password");
+                this.responseResult.Success = false;
+                this.responseResult.ErrorList.Add("Unauthorized.. Invalid EMail Or Password");
+                this.responseResult.StatusCode = HttpStatusCode.Unauthorized;
+                context.Result = new UnauthorizedObjectResult(this.responseResult);
             }
 
             if (IsAuthenticated && _claim != null)
@@ -41,7 +49,7 @@ namespace HaberApp.WebService.CustomFilters
                 bool flagClaim = false;
                 foreach (var item in _claim)
                 {
-                    if (claimsIndentity.HasClaim(ClaimTypes.Role, item))
+                    if (claimsIndentity.HasClaim(ClaimTypes.Role, item) || claimsIndentity.HasClaim("Permission", item))
                     {
                         flagClaim = true;
                         break;
@@ -51,7 +59,10 @@ namespace HaberApp.WebService.CustomFilters
                 }
                 if (!flagClaim)
                 {
-                    context.Result = new ObjectResult("Forbidden For This")
+                    this.responseResult.Success = false;
+                    this.responseResult.ErrorList.Add("Forbidden For This");
+                    this.responseResult.StatusCode = HttpStatusCode.Forbidden;
+                    context.Result = new ObjectResult(this.responseResult)
                     {
                         StatusCode = (int)HttpStatusCode.Forbidden
                     };

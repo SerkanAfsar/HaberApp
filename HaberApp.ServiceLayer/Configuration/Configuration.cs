@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace HaberApp.ServiceLayer.Configuration
@@ -55,7 +56,6 @@ namespace HaberApp.ServiceLayer.Configuration
 
             return services;
         }
-
         public static IServiceCollection RegisterFluentValidations(this IServiceCollection services)
         {
             if (services == null)
@@ -77,7 +77,6 @@ namespace HaberApp.ServiceLayer.Configuration
             services.AddScoped<IValidator<CreateRoleRequestDto>, RoleRequestValidator>();
             return services;
         }
-
         public static IServiceCollection RegisterIdentityAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var settings = RegisterConfig<JwtSettings>(services, configuration.GetSection("JWTConfig"));
@@ -123,7 +122,40 @@ namespace HaberApp.ServiceLayer.Configuration
             configuration.Bind(config);
             return config;
         }
+        public static IServiceCollection RegisterSwagger(this IServiceCollection services)
+        {
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Haber App", Version = "v1" });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter a valid token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
+
+            });
+            return services;
+        }
     }
 }
 

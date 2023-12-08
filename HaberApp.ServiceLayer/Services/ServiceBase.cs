@@ -29,7 +29,7 @@ namespace HaberApp.ServiceLayer.Services
             this.responseResult = new ResponseResult<ResponseDto>();
         }
 
-        public async Task<ResponseResult<ResponseDto>> AddAsync(RequestDto Dto, CancellationToken cancellationToken = default)
+        public virtual async Task<ResponseResult<ResponseDto>> AddAsync(RequestDto Dto, CancellationToken cancellationToken = default)
         {
             var entity = await this.repositoryBase.CreateAsync(this.mapper.Map<Domain>(Dto), cancellationToken);
             await this.unitOfWork.CommitAsync(cancellationToken);
@@ -37,7 +37,7 @@ namespace HaberApp.ServiceLayer.Services
             return this.responseResult;
         }
 
-        public async Task<ResponseResult<ResponseDto>> AddRangeAsync(IEnumerable<RequestDto> Dtos, CancellationToken cancellationToken = default)
+        public virtual async Task<ResponseResult<ResponseDto>> AddRangeAsync(IEnumerable<RequestDto> Dtos, CancellationToken cancellationToken = default)
         {
             var result = await this.repositoryBase.AddRangeAsync(this.mapper.Map<List<Domain>>(Dtos), cancellationToken);
             await this.unitOfWork.CommitAsync(cancellationToken);
@@ -45,14 +45,14 @@ namespace HaberApp.ServiceLayer.Services
             return this.responseResult;
         }
 
-        public async Task<ResponseResult<ResponseDto>> DeleteAsync(int id, CancellationToken cancellationToken = default)
+        public virtual async Task<ResponseResult<ResponseDto>> DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
             this.responseResult.Entity = this.mapper.Map<ResponseDto>(await this.repositoryBase.DeleteAsync(id, cancellationToken));
             await this.unitOfWork.CommitAsync(cancellationToken);
             return this.responseResult;
         }
 
-        public async Task<ResponseResult<ResponseDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        public virtual async Task<ResponseResult<ResponseDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var result = await this.repositoryBase.GetByIdAsync(id, cancellationToken) ?? null;
             if (result == null)
@@ -63,14 +63,14 @@ namespace HaberApp.ServiceLayer.Services
             return this.responseResult;
         }
 
-        public async Task<ResponseResult<ResponseDto>> GetListAsync(Expression<Func<Domain, bool>> predicate = null, CancellationToken cancellationToken = default)
+        public virtual async Task<ResponseResult<ResponseDto>> GetListAsync(Expression<Func<Domain, bool>> predicate = null, CancellationToken cancellationToken = default)
         {
             var list = await this.repositoryBase.GetListAsync(predicate);
             this.responseResult.Entities = this.mapper.Map<List<ResponseDto>>(list);
             return this.responseResult;
         }
 
-        public async Task<ResponseResult<ResponseDto>> RemoveRangeAsync(IEnumerable<RequestDto> Dtos, CancellationToken cancellationToken = default)
+        public virtual async Task<ResponseResult<ResponseDto>> RemoveRangeAsync(IEnumerable<RequestDto> Dtos, CancellationToken cancellationToken = default)
         {
             var result = await this.repositoryBase.RemoveRangeAsync(this.mapper.Map<List<Domain>>(Dtos), cancellationToken);
             await this.unitOfWork.CommitAsync(cancellationToken);
@@ -78,7 +78,7 @@ namespace HaberApp.ServiceLayer.Services
             return this.responseResult;
         }
 
-        public async Task<ResponseResult<ResponseDto>> UpdateAsync(int id, RequestDto Dto, CancellationToken cancellationToken = default)
+        public virtual async Task<ResponseResult<ResponseDto>> UpdateAsync(int id, RequestDto Dto, CancellationToken cancellationToken = default)
         {
             var entity = await this.repositoryBase.UpdateAsync(id, this.mapper.Map<Domain>(Dto), cancellationToken);
             if (entity == null)

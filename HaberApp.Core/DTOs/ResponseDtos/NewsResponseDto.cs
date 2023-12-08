@@ -11,6 +11,9 @@
         public string NewsPicture { get; set; }
         public int SourceUrl { get; set; }
         public int CategoryId { get; set; }
+        public string? NewsPictureSmall { get; set; }
+        public string? NewsPictureMedium { get; set; }
+        public string? NewsPictureBig { get; set; }
         public CategoryResponseDto Category { get; set; }
     }
 }

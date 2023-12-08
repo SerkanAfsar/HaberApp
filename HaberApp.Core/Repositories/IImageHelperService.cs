@@ -6,5 +6,6 @@ namespace HaberApp.Core.Repositories
     {
         Task<ImageResponseModel> ImageResult(string imagePath);
         List<string>? RestoreVariants(ImageResponseModel model);
+        Task<ImageResponseModel> RemoveImageFromCdnAsync(string imageIdentifier);
     }
 }

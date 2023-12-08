@@ -1,4 +1,5 @@
 using HaberApp.Core.Models;
+using HaberApp.Core.Models.Enums;
 using HaberApp.Repository;
 using HaberApp.Repository.Configuration;
 using HaberApp.ServiceLayer.Configuration;
@@ -24,7 +25,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(opt =>
 builder.Services.AddMemoryCache();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.RegisterSwagger();
 builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
@@ -62,6 +63,64 @@ builder.Services.AddCors(options => options.AddPolicy("customPolicy", builder =>
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+    foreach (var item in Enum.GetValues(typeof(RoleTypes)))
+    {
+        var existIf = await roleManager.RoleExistsAsync(item.ToString());
+        if (!existIf)
+        {
+            await roleManager.CreateAsync(new AppRole()
+            {
+                Name = item.ToString(),
+                RoleType = (RoleTypes)item,
+
+            });
+        }
+    }
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+    var rootUser = new AppUser()
+    {
+        Email = "serkan-afsar@hotmail.com",
+        Name = "Serkan",
+        Surname = "Afþar",
+        UserName = "serkan-afsar@hotmail.com"
+    };
+
+    var existedUser = await userManager.FindByEmailAsync(rootUser.Email);
+    if (existedUser != null)
+    {
+        var deneme = await userManager.AddToRoleAsync(existedUser, nameof(RoleTypes.RootAdmin));
+    }
+    else
+    {
+        var userResult = await userManager.CreateAsync(rootUser, "1Q2w3E4r!");
+        if (userResult.Succeeded)
+        {
+
+            var roleResult = await userManager.AddToRoleAsync(rootUser, nameof(RoleTypes.RootAdmin));
+            if (roleResult.Succeeded)
+            {
+
+            }
+            else
+            {
+                await userManager.DeleteAsync(rootUser);
+                //throw new ApplicationException(string.Join(",", roleResult.Errors.Select(a => a.Description).ToList()));
+            }
+        }
+        else
+        {
+
+            //throw new ApplicationException(string.Join(",", userResult.Errors.Select(a => a.Description).ToList()));
+        }
+    }
+
+
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

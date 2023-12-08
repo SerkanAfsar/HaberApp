@@ -38,6 +38,28 @@ namespace HaberApp.Repository.Repositories
             }
         }
 
+        public async Task<ImageResponseModel> RemoveImageFromCdnAsync(string imageIdentifier)
+        {
+            var client = new HttpClient();
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri($"https://api.cloudflare.com/client/v4/accounts/{this.cloudFlareSettings.AccountId}/images/v1/{imageIdentifier}"),
+                Headers =
+                     {
+                        { "Authorization", $"Bearer {this.cloudFlareSettings.TokenKey}" },
+                     },
+            };
+
+            using (var response = await client.SendAsync(request))
+            {
+
+                return JsonSerializer.Deserialize<ImageResponseModel>(await response.Content.ReadAsStringAsync());
+
+            }
+        }
+
         public List<string>? RestoreVariants(ImageResponseModel model)
         {
             if (!model.success)

@@ -3,6 +3,7 @@ using HaberApp.Core.DTOs.ResponseDtos;
 using HaberApp.Core.Models;
 using HaberApp.Core.Services;
 using HaberApp.Core.Utils;
+using HaberApp.ServiceLayer.Constants;
 using HaberApp.WebService.CustomFilters;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,7 @@ namespace HaberApp.WebService.Controllers
         {
             this.categorySourceService = categorySourceService;
         }
+        [CustomAuthorize(Modules.CategoryUrlsModule.Read)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -27,30 +29,38 @@ namespace HaberApp.WebService.Controllers
             return Ok(result);
 
         }
+        [CustomAuthorize(Modules.CategoryUrlsModule.Read)]
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
             var result = await this.categorySourceService.GetListAsync(null, cancellationToken);
             return Ok(result);
         }
+
+        [CustomAuthorize(Modules.CategoryUrlsModule.Read)]
         [HttpGet("GetCategorySourcesByPagination/{pageIndex}/{limitSize}/{categoryId?}")]
         public async Task<IActionResult> GetAll(int pageIndex, int limitSize, int? categoryId = null, CancellationToken cancellationToken = default)
         {
             var result = await this.categorySourceService.GetCategorySourcesByPagination(pageIndex, limitSize, categoryId, cancellationToken);
             return Ok(result);
         }
+
+        [CustomAuthorize(Modules.CategoryUrlsModule.Create)]
         [HttpPost]
         public async Task<IActionResult> AddCategorySource([FromBody] CategorySourceRequestDto model, CancellationToken cancellationToken = default)
         {
             var result = await this.categorySourceService.AddAsync(model, cancellationToken);
             return Ok(result);
         }
+        [CustomAuthorize(Modules.CategoryUrlsModule.Update)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategorySource(int id, [FromBody] CategorySourceRequestDto model, CancellationToken cancellationToken = default)
         {
             var result = await this.categorySourceService.UpdateAsync(id, model, cancellationToken);
             return Ok(result);
         }
+
+        [CustomAuthorize(Modules.CategoryUrlsModule.Delete)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategorySource(int id, CancellationToken cancellationToken = default)
         {

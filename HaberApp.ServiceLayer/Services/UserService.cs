@@ -26,47 +26,6 @@ namespace HaberApp.ServiceLayer.Services
             this.roleManager = roleManager;
             this.responseResult = new ResponseResult<string>();
             this.jwtSettings = jwtSettings;
-
-            foreach (var item in Enum.GetValues(typeof(RoleTypes)))
-            {
-                if (!roleManager.RoleExistsAsync(item.ToString()).Result)
-                {
-                    roleManager.CreateAsync(new AppRole()
-                    {
-                        Name = item.ToString(),
-                        RoleType = (RoleTypes)item,
-
-                    });
-                }
-            }
-
-            var rootUser = new AppUser()
-            {
-                Email = "serkan-afsar@hotmail.com",
-                Name = "Serkan",
-                Surname = "Afşar",
-                UserName = "serkan-afsar@hotmail.com"
-            };
-
-            var userResult = userManager.CreateAsync(rootUser, "1Q2w3E4r!").Result;
-            if (userResult.Succeeded)
-            {
-
-                var roleResult = userManager.AddToRoleAsync(rootUser, nameof(RoleTypes.RootAdmin)).Result;
-                if (roleResult.Succeeded)
-                {
-
-                }
-                else
-                {
-                    userManager.DeleteAsync(rootUser);
-                    //throw new ApplicationException(string.Join(",", roleResult.Errors.Select(a => a.Description).ToList()));
-                }
-            }
-            else
-            {
-                //throw new ApplicationException(string.Join(",", userResult.Errors.Select(a => a.Description).ToList()));
-            }
         }
         public async Task<ResponseResult<string>> CreateAppUserUserAsync(CreateUserRequestDto model)
         {
@@ -138,7 +97,12 @@ namespace HaberApp.ServiceLayer.Services
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
                 var userRole = await roleManager.FindByNameAsync(role);
-                claims.AddRange(await roleManager.GetClaimsAsync(userRole));
+                var roleClaims = await roleManager.GetClaimsAsync(userRole);
+
+                foreach (var roleClaim in roleClaims)
+                {
+                    claims.Add(new Claim(roleClaim.Type, roleClaim.Value));
+                }
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret));

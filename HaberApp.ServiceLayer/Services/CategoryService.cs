@@ -18,13 +18,17 @@ namespace HaberApp.ServiceLayer.Services
         private readonly ICategoryRepository _repository;
         private readonly ResponseResult<CategoryResponseDto> responseResult;
         private readonly IUnitOfWork unitOfWork;
-        public CategoryService(IRepositoryBase<Category> repositoryBase, IUnitOfWork unitOfWork, IMapper mapper, ICategoryRepository _repository) : base(repositoryBase, unitOfWork, mapper)
+        private readonly INewsRepository newsRepository;
+        private readonly IImageHelperService ımageHelperService;
+        public CategoryService(IRepositoryBase<Category> repositoryBase, IUnitOfWork unitOfWork, IMapper mapper, ICategoryRepository _repository, INewsRepository newsRepository, IImageHelperService ımageHelperService) : base(repositoryBase, unitOfWork, mapper)
         {
             this._repository = _repository;
 
             this.mapper = mapper;
             this.responseResult = new ResponseResult<CategoryResponseDto>();
             this.unitOfWork = unitOfWork;
+            this.newsRepository = newsRepository;
+            this.ımageHelperService = ımageHelperService;
         }
 
         public async Task<ResponseResult<CategoryResponseDto>> DownCategoryAsync(CategoryResponseDto category, CancellationToken cancellationToken = default)
@@ -65,6 +69,24 @@ namespace HaberApp.ServiceLayer.Services
             await this.unitOfWork.CommitAsync(cancellationToken);
             this.responseResult.Entity = this.mapper.Map<CategoryResponseDto>(category);
             return this.responseResult;
+        }
+        public async override Task<ResponseResult<CategoryResponseDto>> DeleteAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var news = await this.newsRepository.GetListAsync(a => a.CategoryId == id);
+            foreach (var item in news)
+            {
+                var bigOne = item.NewsPictureBig;
+                if (!string.IsNullOrEmpty(bigOne))
+                {
+                    var arr = bigOne.Split("/");
+                    var lastOne = arr[arr.Length - 2];
+                    var deneme = await this.ımageHelperService.RemoveImageFromCdnAsync(lastOne);
+                    var deneme2 = deneme;
+
+                }
+
+            }
+            return await base.DeleteAsync(id, cancellationToken);
         }
     }
 }

@@ -4,35 +4,35 @@
     {
         public static class CategoryModule
         {
-            public const string Create = "Permission.Category.Create";
-            public const string Read = "Permission.Category.Read";
-            public const string Update = "Permission.Category.Update";
-            public const string Delete = "Permission.Category.Delete";
+            public const string Create = "Permission.Kategori.Create";
+            public const string Read = "Permission.Kategori.Read";
+            public const string Update = "Permission.Kategori.Update";
+            public const string Delete = "Permission.Kategori.Delete";
 
         }
 
         public static class NewsModule
         {
-            public const string Create = "Permission.News.Create";
-            public const string Read = "Permission.News.Read";
-            public const string Update = "Permission.News.Update";
-            public const string Delete = "Permission.News.Delete";
+            public const string Create = "Permission.Haber.Create";
+            public const string Read = "Permission.Haber.Read";
+            public const string Update = "Permission.Haber.Update";
+            public const string Delete = "Permission.Haber.Delete";
 
         }
 
         public static class CategoryUrlsModule
         {
-            public const string Create = "Permission.CategoryUrl.Create";
-            public const string Read = "Permission.CategoryUrl.Read";
-            public const string Update = "Permission.CategoryUrl.Update";
-            public const string Delete = "Permission.CategoryUrl.Delete";
+            public const string Create = "Permission.KategoriUrl.Create";
+            public const string Read = "Permission.KategoriUrl.Read";
+            public const string Update = "Permission.KategoriUrl.Update";
+            public const string Delete = "Permission.KategoriUrl.Delete";
         }
         public static class SiteSettings
         {
-            public const string Create = "Permission.SiteSettings.Create";
-            public const string Read = "Permission.SiteSettings.Read";
-            public const string Update = "Permission.SiteSettings.Update";
-            public const string Delete = "Permission.SiteSettings.Delete";
+            public const string Create = "Permission.SiteAyarları.Create";
+            public const string Read = "Permission.SiteAyarları.Read";
+            public const string Update = "Permission.SiteAyarları.Update";
+            public const string Delete = "Permission.SiteAyarları.Delete";
         }
     }
 }
