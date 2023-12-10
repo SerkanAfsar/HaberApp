@@ -62,6 +62,8 @@ namespace HaberApp.ServiceLayer.Services
         {
             if (model == null)
             {
+                this.responseResult.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                this.responseResult.Success = false;
                 this.responseResult.ErrorList.Add("Bilgileri Giriniz!");
                 return this.responseResult;
             }
@@ -69,21 +71,27 @@ namespace HaberApp.ServiceLayer.Services
             var user = await userManager.FindByEmailAsync(model.EMail);
             if (user == null)
             {
+                this.responseResult.StatusCode = System.Net.HttpStatusCode.NotFound;
+                this.responseResult.Success = false;
                 this.responseResult.ErrorList.Add("Kullanıcı Bulunamadı!");
                 return this.responseResult;
             }
 
             if (await userManager.IsLockedOutAsync(user))
             {
+                this.responseResult.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                this.responseResult.Success = false;
                 this.responseResult.ErrorList.Add("Oturum Kilitlenmiştir");
                 return this.responseResult;
             }
 
             if (await userManager.CheckPasswordAsync(user, model.Password) == false)
             {
+                this.responseResult.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                this.responseResult.Success = false;
                 await this.userManager.AccessFailedAsync(user);
                 var count = await this.userManager.GetAccessFailedCountAsync(user);
-                this.responseResult.ErrorList.Add($"Şifre Yanlış. Kalan Deneme Hakkınız ${count}");
+                this.responseResult.ErrorList.Add($"Şifre Yanlış. Kalan Deneme Hakkınız {count}");
                 return this.responseResult;
             }
 
